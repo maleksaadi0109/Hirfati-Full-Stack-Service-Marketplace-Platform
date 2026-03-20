@@ -47,6 +47,14 @@ export default function Profile() {
 
     const sessionUser = auth?.user || localUserData || {};
 
+    const resolvePictureUrl = (value?: string | null) => {
+        if (!value) return null;
+        if (value.startsWith('http://') || value.startsWith('https://'))
+            return value;
+        if (value.startsWith('/storage/')) return value;
+        return `/storage/${value}`;
+    };
+
     const user = {
         name: `${sessionUser.first_name || sessionUser.firstName || 'Malek'} ${sessionUser.last_name || sessionUser.lastName || 'Saadi'}`.trim(),
         email: sessionUser.email || 'malek.saadi@example.com',
@@ -57,7 +65,8 @@ export default function Profile() {
             '+218 91 123 4567',
         location: sessionUser.city || sessionUser.location || 'Tripoli, Libya',
         avatar:
-            sessionUser.picture ||
+            resolvePictureUrl(sessionUser.picture) ||
+            sessionUser.picture_url ||
             sessionUser.avatar_url ||
             'https://i.pravatar.cc/150?u=malek',
         birthday: sessionUser.birthday || '',
@@ -164,9 +173,11 @@ export default function Profile() {
                 const updatedUser = {
                     ...sessionUser,
                     ...response.data.data,
-                    picture: response.data.data.picture
-                        ? `/storage/${response.data.data.picture}`
-                        : sessionUser.picture,
+                    picture: response.data.data.picture || sessionUser.picture,
+                    picture_url:
+                        response.data.data.picture_url ||
+                        resolvePictureUrl(response.data.data.picture) ||
+                        resolvePictureUrl(sessionUser.picture),
                 };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
                 setPictureFile(null);

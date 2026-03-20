@@ -10,6 +10,7 @@ class ProviderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'providerId' => $this->id,
             'id' => $this->user?->id,
             'firstName' => $this->user?->first_name,
             'lastName' => $this->user?->last_name,
@@ -28,6 +29,7 @@ class ProviderResource extends JsonResource
             'bio' => $this->bio,
             'hourlyRate' => $this->hourly_rate,
             'isAvailable' => $this->is_available,
+            'skills'=>$this->skills,
             'user' => $this->whenLoaded('user', function () {
                 return [
                     'id' => $this->user->id,

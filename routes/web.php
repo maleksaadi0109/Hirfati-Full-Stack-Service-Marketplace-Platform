@@ -12,12 +12,7 @@ Route::get('/onboarding', function () {
     return Inertia::render('auth/Onboarding');
 })->name('onboarding');
 
-Route::get('/rejected-approval', function () {
-    return Inertia::render('auth/rejected-approval');
-})->middleware(['rejected_provider'])->name('rejected-approval');
- Route::get('/client/dashboard', function () {
-        return Inertia::render('client/Dashboard');
-})->name('client.dashboard');
+
   
 
 
@@ -32,18 +27,7 @@ Route::middleware(['auth'])->group(function () {
 
   
 
- 
-    Route::get('/worker/dashboard', function () {
-        return Inertia::render('worker/Dashboard');
-    })->name('worker.dashboard');
 
-    Route::get('/worker/messages', function () {
-        return Inertia::render('worker/Messages');
-    })->name('worker.messages');
-    
-    Route::get('/pending-approval',function(){
-        return Inertia::render('auth/pending-approval');
-    })->middleware(['pending_provider'])->name('pending-approval');
 
    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/admin/craftsmen', function () {

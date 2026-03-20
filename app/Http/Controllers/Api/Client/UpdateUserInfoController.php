@@ -23,11 +23,14 @@ class UpdateUserInfoController extends Controller
             $validated['picture'] = $request->file('picture')
                 ->storeAs('profile_pictures', \Illuminate\Support\Str::uuid()->toString() . '.' . $request->file('picture')->extension(), 'public');
         }
-
+        
         if (!empty($validated)) {
             $user->update($validated);
         }
 
-        return $this->ok('Profile updated successfully.', $user->toArray());
+        $data = $user->toArray();
+        $data['picture_url'] = $user->picture ? asset('storage/'.$user->picture) : null;
+
+        return $this->ok('Profile updated successfully.', $data);
     }
 }

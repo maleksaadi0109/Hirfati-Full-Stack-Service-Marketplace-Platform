@@ -8,6 +8,7 @@ import {
  DollarSign, Sparkles
 } from 'lucide-react';
 import { NavItem } from '../pages/dashboard/components/DashboardComponents';
+import { Toaster } from 'sonner';
 
 // Background Shapes Component (Static & Optimized for Performance)
 const DashboardBackgroundShapes = () => (
@@ -43,6 +44,7 @@ export default function DashboardLayout({ children, title = "Dashboard" }: any) 
 
  return (
  <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-orange-100 selection:text-orange-900 relative overflow-hidden flex">
+ <Toaster position="top-center" richColors />
  <Head title={`${title} - Hirfati`} />
 
  <DashboardBackgroundShapes />
@@ -102,6 +104,7 @@ export default function DashboardLayout({ children, title = "Dashboard" }: any) 
 
  {displayRole === 'client' ? (
  <>
+ <NavItem icon={<Sparkles />} label="Explore" href="/client/explore" active={window.location.pathname.includes('/client/explore')} />
  <NavItem icon={<ShoppingBag />} label="My Orders" href="/my-orders" active={window.location.pathname.includes('/my-orders')} />
  <NavItem icon={<Search />} label="Find Pros" href="/client/find-pros" active={window.location.pathname.includes('/client/find-pros')} />
  <NavItem icon={<User />} label="My Profile" href="/client/profile" active={window.location.pathname.includes('/client/profile')} />
@@ -109,9 +112,11 @@ export default function DashboardLayout({ children, title = "Dashboard" }: any) 
  ) : (
  <>
  <NavItem icon={<Briefcase />} label="Job Requests" badge={3} />
+ <NavItem icon={<Sparkles />} label="Portfolio" href="/worker/posts" active={window.location.pathname.includes('/worker/posts')} />
  <NavItem icon={<DollarSign />} label="Earnings" />
  <NavItem icon={<Star />} label="My Reviews" />
  <NavItem icon={<Calendar />} label="Schedule" />
+ <NavItem icon={<User />} label="My Profile" href="/worker/profile" active={window.location.pathname.includes('/worker/profile')} />
  </>
  )}
 

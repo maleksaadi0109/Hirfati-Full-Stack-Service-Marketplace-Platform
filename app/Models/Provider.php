@@ -19,6 +19,7 @@ class Provider extends Model
         'bio',
         'hourly_rate',
         'is_available',
+        'skills',
     ];
 
     protected $casts = [
@@ -49,5 +50,15 @@ class Provider extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(CustomerOrder::class);
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(ProviderAddress::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(ProviderPost::class);
     }
 }

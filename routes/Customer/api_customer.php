@@ -20,4 +20,18 @@ Route::middleware('auth:sanctum','role:customer')->group(function () {
     Route::post('/client/orders', [\App\Http\Controllers\Api\Client\OrderController::class, 'store']);
     Route::get('/client/orders/{order}', [\App\Http\Controllers\Api\Client\OrderController::class, 'show']);
     Route::patch('/client/orders/{order}/cancel', [\App\Http\Controllers\Api\Client\OrderController::class, 'cancel']);
+
+    // Message Routes
+    Route::post('/client/messages/initialize', [\App\Http\Controllers\Api\Messages\MessageController::class, 'initializeConversation']);
+    Route::get('/client/messages', [\App\Http\Controllers\Api\Messages\MessageController::class, 'index']);
+    Route::get('/client/messages/{order}', [\App\Http\Controllers\Api\Messages\MessageController::class, 'fetchMessages']);
+    Route::post('/client/messages/{order}', [\App\Http\Controllers\Api\Messages\MessageController::class, 'store']);
+
+    // Find Pros Discovery
+    Route::get('/client/providers', [\App\Http\Controllers\Api\Client\ProviderDiscoveryController::class, 'index']);
+
+    // Provider Posts for Customers
+    Route::get('/client/posts', [\App\Http\Controllers\Api\Provider\ProviderPostController::class, 'customerAllPosts']);
+    Route::get('/client/providers/{provider}/posts', [\App\Http\Controllers\Api\Provider\ProviderPostController::class, 'customerProviderPosts']);
+    Route::get('/client/providers/{provider}', [\App\Http\Controllers\Api\Provider\ProviderController::class, 'showCustomerProfile']);
 });

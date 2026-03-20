@@ -30,6 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
              \Illuminate\Support\Facades\Route::middleware('web')
              ->group(base_path('routes/Customer/Customer_web.php'));
 
+             \Illuminate\Support\Facades\Route::middleware('web')
+                ->group(base_path('routes/Provider/provider_web.php'));
+
              \Illuminate\Support\Facades\Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/Customer/api_customer.php'));
@@ -51,6 +54,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'rejected_provider'=> \App\Http\Middleware\Provider\EnsureProviderRejected::class,
             'pending_provider'=> \App\Http\Middleware\Provider\EnsureProviderPending::class,
+            'status'=>\App\Http\Middleware\Provider\CheckProviderStatus::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import { motion } from 'framer-motion';
+import { usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 import {
  Briefcase, MessageSquare, DollarSign, Star,
  Check, MapPin, Clock, XCircle, Calendar, ShieldCheck,
@@ -32,7 +34,30 @@ const EARNINGS_DATA = [
 ];
 
 export default function WorkerDashboard() {
+ const { auth } = usePage<any>().props;
  const [isAvailable, setIsAvailable] = useState(true);
+
+ const provider = auth?.user?.provider || auth?.user?.data?.provider;
+ 
+ // Calculate Profile Strength
+ const calculateStrength = () => {
+  if (!provider) return 20;
+  let score = 20; // Basic account
+  if (provider.bio) score += 20;
+  if (provider.hourly_rate || provider.hourlyRate) score += 20;
+  if (provider.skills) score += 20;
+  if (auth?.user?.picture || auth?.user?.data?.picture) score += 20;
+  return score;
+ };
+
+ const profileStrength = calculateStrength();
+
+ useEffect(() => {
+  // Redirect to complete profile if bio or hourly rate is missing
+  if (provider && (!provider.bio || (!provider.hourly_rate && !provider.hourlyRate))) {
+   window.location.href = '/worker/complete-profile';
+  }
+ }, [provider]);
 
  return (
  <DashboardLayout title="Worker Workspace">

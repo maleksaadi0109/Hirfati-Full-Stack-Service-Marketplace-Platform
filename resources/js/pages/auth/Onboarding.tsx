@@ -23,7 +23,11 @@ interface FormData {
     bio: string;
     referralSource: string;
     idDocument: File | null;
+    picture: File | null;
+    birthday: string;
 }
+
+type FormErrors = { [K in keyof FormData]?: string } & { role?: string; general?: string };
 
 // --- Constants ---
 const CITIES = ['Tripoli', 'Benghazi', 'Misrata', 'Zawiya', 'Sabha', 'Tobruk', 'Zliten'];
@@ -34,7 +38,7 @@ const PROFESSIONS = ['Plumber', 'Electrician', 'Cleaner', 'Painter', 'Carpenter'
 export default function Onboarding() {
     const [currentStep, setCurrentStep] = useState(1);
     const [direction, setDirection] = useState(0);
-    const [errors, setErrors] = useState<Partial<FormData> & { role?: string; general?: string }>({});
+    const [errors, setErrors] = useState<FormErrors>({});
     const [pendingToken, setPendingToken] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationStep, setVerificationStep] = useState(false);
@@ -52,6 +56,8 @@ export default function Onboarding() {
         bio: '',
         referralSource: '',
         idDocument: null,
+        picture: null,
+        birthday: '',
     });
 
     // Get pending_token from URL query params
@@ -63,7 +69,7 @@ export default function Onboarding() {
         }
     }, []);
 
-    const totalSteps = 4;
+    const totalSteps = 5;
 
     // --- Handlers ---
     const updateForm = (key: keyof FormData, value: any) => {
@@ -88,7 +94,7 @@ export default function Onboarding() {
     };
 
     const validateStep = (step: number): boolean => {
-        const newErrors: Partial<FormData> & { role?: string } = {};
+        const newErrors: FormErrors = {};
         let isValid = true;
 
         if (step === 1) {
@@ -104,12 +110,17 @@ export default function Onboarding() {
                 if (!formData.yearsOfExperience) newErrors.yearsOfExperience = 'Years of exp. required';
             }
         } else if (step === 3) {
+            // Profile details step
+            if (formData.role === 'professional') {
+                // Birthday/Photo optional but recommended
+            }
+        } else if (step === 4) {
             // ID document upload step for professionals
             if (formData.role === 'professional' && !formData.idDocument) {
                 newErrors.idDocument = 'Please upload a verification document' as any;
                 isValid = false;
             }
-        } else if (step === 4) {
+        } else if (step === 5) {
             if (!formData.referralSource) newErrors.referralSource = 'Please tell us where you heard about us';
         }
 
@@ -124,10 +135,10 @@ export default function Onboarding() {
     const handleNext = () => {
         if (!validateStep(currentStep)) return;
 
-        // For clients, skip step 3 (ID upload)
+        // For clients, skip provider-only steps
         if (currentStep === 2 && formData.role === 'client') {
             setDirection(1);
-            setCurrentStep(4); // Skip to referral step
+            setCurrentStep(5); // Skip to referral step
             return;
         }
 
@@ -141,8 +152,8 @@ export default function Onboarding() {
 
     const handleBack = () => {
         if (currentStep > 1) {
-            // If client is going back from step 4, go to step 2
-            if (currentStep === 4 && formData.role === 'client') {
+            // If client is going back from step 5, go to step 2
+            if (currentStep === 5 && formData.role === 'client') {
                 setDirection(-1);
                 setCurrentStep(2);
                 return;
@@ -153,22 +164,47 @@ export default function Onboarding() {
     };
 
     const handleComplete = async () => {
-        if (!pendingToken) {
-            // No pending token — this means the registration API wasn't used.
-            // Save locally and redirect.
-            localStorage.setItem('herfati_user_data', JSON.stringify(formData));
-            localStorage.setItem('herfati_user_role', formData.role || 'client');
-            window.location.href = '/';
+        if (pendingToken) {
+            // For new registrations, we proceed to verification first.
+            // The birthday/picture were already captured in the registration step if provided.
+            setVerificationStep(true);
             return;
         }
 
-        // Now we need to call POST /api/register with full data (including role, profession, etc.)
-        // The original register only sent basic data. Now we update the cached pending registration
-        // by calling /api/register again with the onboarding data merged.
-        // Actually, we just need to verify the registration code to create the user.
-        // The role/profession data was already sent in the first step via register.tsx.
-        // So let's proceed to the verification step.
-        setVerificationStep(true);
+        setIsSubmitting(true);
+        setErrors({});
+
+        try {
+            const data = new FormData();
+            
+            // Map frontend fields (birthday, picture + provider fields)
+            Object.entries(formData).forEach(([key, value]) => {
+                if (value !== null && value !== '') {
+                    if (value instanceof File) {
+                        data.append(key, value);
+                    } else {
+                        data.append(key, String(value));
+                    }
+                }
+            });
+
+            // Authenticated update via ProviderController
+            await axios.post('/api/provider/profile', data, {
+                headers: { 
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
+
+            window.location.href = '/pending-approval';
+        } catch (error: any) {
+            setIsSubmitting(false);
+            if (error.response?.data?.errors) {
+                setErrors(error.response.data.errors);
+            } else {
+                setErrors({ general: 'Failed to complete onboarding. Please try again.' });
+            }
+        }
     };
 
     const handleVerify = async () => {
@@ -356,12 +392,12 @@ export default function Onboarding() {
                                         <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Where are you located?</h2>
                                         <p className="text-slate-500">To find services nearby.</p>
                                     </div>
-                                    <SelectField
-                                        label="City" value={formData.city}
-                                        onChange={(val) => updateForm('city', val)}
-                                        options={CITIES} icon={<Building2 className="w-5 h-5" />}
-                                        placeholder="Select city..." error={errors.city}
-                                    />
+                                        <SelectField
+                                            label="City" value={formData.city}
+                                            onChange={(val: string) => updateForm('city', val)}
+                                            options={CITIES} icon={<Building2 className="w-5 h-5" />}
+                                            placeholder="Select city..." error={errors.city}
+                                        />
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-slate-700 ml-1">Address Details <span className="font-normal text-slate-400">(Optional)</span></label>
                                         <textarea
@@ -405,7 +441,7 @@ export default function Onboarding() {
                                             >
                                                 <SelectField
                                                     label="Service Category" value={formData.category}
-                                                    onChange={(val) => updateForm('category', val)}
+                                                    onChange={(val: string) => updateForm('category', val)}
                                                     options={CATEGORIES} placeholder="Select..." error={errors.category}
                                                 />
                                             </motion.div>
@@ -418,12 +454,12 @@ export default function Onboarding() {
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <SelectField
                                                         label="Profession" value={formData.profession}
-                                                        onChange={(val) => updateForm('profession', val)}
+                                                        onChange={(val: string) => updateForm('profession', val)}
                                                         options={PROFESSIONS} placeholder="Select..." error={errors.profession}
                                                     />
                                                     <InputField
                                                         label="Yrs Exp." type="number" value={formData.yearsOfExperience}
-                                                        onChange={(val) => updateForm('yearsOfExperience', val)}
+                                                        onChange={(val: string) => updateForm('yearsOfExperience', val)}
                                                         placeholder="5" error={errors.yearsOfExperience}
                                                     />
                                                 </div>
@@ -442,8 +478,57 @@ export default function Onboarding() {
                                 </div>
                             )}
 
-                            {/* STEP 3: ID Document Upload (professionals only) */}
+                            {/* STEP 3: Profile Details (professionals only) */}
                             {currentStep === 3 && (
+                                <div className="space-y-6">
+                                    <div className="text-center mb-6">
+                                        <div className="w-16 h-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <UserCircle2 className="w-8 h-8" />
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Profile Details</h2>
+                                        <p className="text-slate-500 text-sm">Add a picture and your birthday to help clients trust you.</p>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-2 flex flex-col items-center">
+                                            <label className="text-sm font-bold text-slate-700">Profile Picture</label>
+                                            <div className="relative group w-24 h-24 rounded-full overflow-hidden border-2 border-slate-100 hover:border-orange-200 transition-colors shadow-inner flex items-center justify-center bg-slate-50">
+                                                {formData.picture ? (
+                                                    <img src={URL.createObjectURL(formData.picture)} alt="Preview" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <UserCircle2 className="w-12 h-12 text-slate-300" />
+                                                )}
+                                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                                    <label htmlFor="picture" className="text-white text-[10px] font-bold cursor-pointer absolute inset-0 flex items-center justify-center">
+                                                        {formData.picture ? 'Change' : 'Upload'}
+                                                    </label>
+                                                    <input
+                                                        id="picture" type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden"
+                                                        onChange={(e) => updateForm('picture', e.target.files?.[0] || null)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            {formData.picture && (
+                                                <button type="button" onClick={() => updateForm('picture', null)} className="text-[10px] text-red-500 hover:text-red-700 font-bold mt-1">
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label htmlFor="birthday" className="text-sm font-bold text-slate-700 ml-1">Birthday</label>
+                                            <input
+                                                type="date" id="birthday" value={formData.birthday} onChange={(e) => updateForm('birthday', e.target.value)}
+                                                max={new Date().toISOString().split('T')[0]}
+                                                className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all text-slate-900 font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* STEP 4: ID Document Upload (professionals only) */}
+                            {currentStep === 4 && (
                                 <div className="space-y-6">
                                     <div className="mb-8 text-center">
                                         <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -464,14 +549,14 @@ export default function Onboarding() {
                                                 <Check className="w-4 h-4" /> {formData.idDocument.name}
                                             </p>
                                         )}
-                                        {errors.idDocument && <p className="text-xs text-red-500 font-bold ml-1">{errors.idDocument as string}</p>}
+                                        {errors.idDocument && <p className="text-xs text-red-500 font-bold ml-1">{errors.idDocument}</p>}
                                         <p className="text-xs text-slate-400 ml-1">Accepted formats: JPG, PNG, PDF. Max size: 2MB</p>
                                     </div>
                                 </div>
                             )}
 
-                            {/* STEP 4: Referral */}
-                            {currentStep === 4 && (
+                            {/* STEP 5: Referral */}
+                            {currentStep === 5 && (
                                 <div className="space-y-6">
                                     <div className="mb-8 text-center">
                                         <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">

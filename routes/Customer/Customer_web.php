@@ -11,6 +11,9 @@ use Inertia\Inertia;
         return Inertia::render('client/Messages');
     })->name('client.messages');
 
+   Route::redirect('/client/message', '/client/messages');
+  
+
      Route::get('/client/find-pros', function () {
          return Inertia::render('client/FindPros');
      })->name('client.find-pros');
@@ -42,3 +45,17 @@ use Inertia\Inertia;
              'addressId' => $address,
          ]);
      })->name('client.addresses.edit');
+
+     Route::get('/client/explore', function () {
+         return Inertia::render('client/ExplorePosts');
+     })->name('client.explore');
+
+     Route::get('/client/providers/{provider}', function (string $provider) {
+         return Inertia::render('client/ProviderPosts', [
+             'providerId' => $provider,
+         ]);
+     })->name('client.providers.show');
+
+     Route::get('/client/providers/{provider}/posts', function (string $provider) {
+         return redirect()->route('client.providers.show', ['provider' => $provider]);
+     })->name('client.providers.posts');

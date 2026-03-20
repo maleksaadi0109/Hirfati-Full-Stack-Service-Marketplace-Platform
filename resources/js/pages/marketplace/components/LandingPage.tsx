@@ -226,11 +226,10 @@ export function LandingPage({ onSearch, onNavigate }: LandingPageProps) {
             style={{ flex: '1 0 auto' }}
         >
             <nav
-                className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-                    scrolled
-                        ? 'border-b border-slate-200/70 bg-white/82 py-3 shadow-[0_16px_40px_-28px_rgba(15,23,42,0.28)] backdrop-blur-2xl'
-                        : 'bg-transparent py-5'
-                }`}
+                className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled
+                    ? 'border-b border-slate-200/70 bg-white/82 py-3 shadow-[0_16px_40px_-28px_rgba(15,23,42,0.28)] backdrop-blur-2xl'
+                    : 'bg-transparent py-5'
+                    }`}
             >
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                     <motion.div
