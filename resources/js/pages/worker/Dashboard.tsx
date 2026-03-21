@@ -122,6 +122,9 @@ export default function WorkerDashboard() {
     const [summary, setSummary] = useState<ProviderDashboardSummary | null>(
         null,
     );
+    const [isUpdatingOrderId, setIsUpdatingOrderId] = useState<number | null>(
+        null,
+    );
 
     const provider = auth?.user?.provider || auth?.user?.data?.provider;
     const authHeaders = useMemo(() => {
@@ -164,6 +167,57 @@ export default function WorkerDashboard() {
 
         loadData();
     }, [authHeaders]);
+
+    const reloadDashboardData = async () => {
+        try {
+            const [messagesRes, postsRes, summaryRes] = await Promise.all([
+                axios.get('/api/provider/messages', {
+                    headers: authHeaders,
+                }),
+                axios.get('/api/provider/posts', { headers: authHeaders }),
+                axios.get('/api/provider/dashboard-summary', {
+                    headers: authHeaders,
+                }),
+            ]);
+
+            const messages =
+                messagesRes.data?.data?.conversations?.data ??
+                messagesRes.data?.data?.conversations ??
+                [];
+            const posts =
+                postsRes.data?.providerPosts?.data ??
+                postsRes.data?.providerPosts ??
+                [];
+
+            setConversations(Array.isArray(messages) ? messages : []);
+            setPortfolioPosts(Array.isArray(posts) ? posts : []);
+            setSummary(summaryRes.data?.data ?? null);
+        } catch {
+            // keep existing UI state when refresh fails
+        }
+    };
+
+    const handleOrderStatusUpdate = async (
+        orderId: number,
+        status: 'confirmed' | 'cancelled',
+    ) => {
+        if (!orderId) return;
+
+        setIsUpdatingOrderId(orderId);
+        try {
+            await axios.patch(
+                `/api/provider/orders/${orderId}/status`,
+                { status },
+                { headers: authHeaders },
+            );
+
+            await reloadDashboardData();
+        } catch {
+            // no-op to avoid crashing dashboard on request errors
+        } finally {
+            setIsUpdatingOrderId(null);
+        }
+    };
 
     const pendingConversations = useMemo(
         () => conversations.filter((c) => Number(c.unreadCount ?? 0) > 0),
@@ -340,7 +394,7 @@ export default function WorkerDashboard() {
                         </h2>
                     </div>
                     <p className="font-medium text-slate-500">
-                        Manage your availability and accept new jobs.
+                        Manage your availability and accept new work.
                     </p>
                 </div>
 
@@ -383,7 +437,7 @@ export default function WorkerDashboard() {
                     delay={0.1}
                 />
                 <StatCard
-                    title="Jobs Completed"
+                    title="Work Completed"
                     value={String(jobsCompleted)}
                     icon={<Briefcase />}
                     trend="From conversations"
@@ -545,7 +599,7 @@ export default function WorkerDashboard() {
                                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
                                     <span className="relative inline-flex h-3 w-3 rounded-full bg-orange-500"></span>
                                 </div>
-                                Job Requests
+                                Work Requests
                             </h2>
                             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold tracking-wide text-slate-600 uppercase">
                                 {pendingJobsCount} Pending
@@ -600,11 +654,35 @@ export default function WorkerDashboard() {
                                     </div>
 
                                     <div className="flex gap-3 pl-4">
-                                        <button className="group/btn flex flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-900 py-3.5 font-bold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-slate-800 hover:shadow-xl active:scale-95">
+                                        <button
+                                            onClick={() =>
+                                                handleOrderStatusUpdate(
+                                                    job.id,
+                                                    'confirmed',
+                                                )
+                                            }
+                                            disabled={
+                                                isUpdatingOrderId === job.id
+                                            }
+                                            className="group/btn flex flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-900 py-3.5 font-bold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-slate-800 hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
                                             <Check className="h-5 w-5 transition-transform group-hover/btn:scale-110" />{' '}
-                                            Accept Job
+                                            {isUpdatingOrderId === job.id
+                                                ? 'Updating...'
+                                                : 'Accept Work'}
                                         </button>
-                                        <button className="flex items-center gap-2 rounded-2xl border-2 border-slate-100 bg-white px-8 py-3.5 font-bold text-slate-600 transition-all hover:border-slate-200 hover:bg-slate-50 hover:text-red-500 active:scale-95">
+                                        <button
+                                            onClick={() =>
+                                                handleOrderStatusUpdate(
+                                                    job.id,
+                                                    'cancelled',
+                                                )
+                                            }
+                                            disabled={
+                                                isUpdatingOrderId === job.id
+                                            }
+                                            className="flex items-center gap-2 rounded-2xl border-2 border-slate-100 bg-white px-8 py-3.5 font-bold text-slate-600 transition-all hover:border-slate-200 hover:bg-slate-50 hover:text-red-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
                                             Decline
                                         </button>
                                     </div>

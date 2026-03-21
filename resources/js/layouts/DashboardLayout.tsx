@@ -111,12 +111,12 @@ export default function DashboardLayout({ children, title = "Dashboard" }: any) 
  </>
  ) : (
  <>
- <NavItem icon={<Briefcase />} label="Job Requests" badge={3} />
- <NavItem icon={<Sparkles />} label="Portfolio" href="/worker/posts" active={window.location.pathname.includes('/worker/posts')} />
- <NavItem icon={<DollarSign />} label="Earnings" />
- <NavItem icon={<Star />} label="My Reviews" />
- <NavItem icon={<Calendar />} label="Schedule" />
- <NavItem icon={<User />} label="My Profile" href="/worker/profile" active={window.location.pathname.includes('/worker/profile')} />
+ <NavItem icon={<Briefcase />} label="My Posts" href="/worker/posts" active={window.location.pathname.startsWith('/worker/posts')} />
+ <NavItem icon={<Calendar />} label="Schedule" href="/worker/schedule" active={window.location.pathname.startsWith('/worker/schedule')} />
+ <NavItem icon={<Bell />} label="Job Requests" href="/worker/job-requests" active={window.location.pathname.startsWith('/worker/job-requests')} />
+ <NavItem icon={<DollarSign />} label="Earnings" href="/worker/earnings" active={window.location.pathname.startsWith('/worker/earnings')} />
+ <NavItem icon={<Star />} label="My Reviews" href="/worker/reviews" active={window.location.pathname.startsWith('/worker/reviews')} />
+ <NavItem icon={<User />} label="My Profile" href="/worker/profile" active={window.location.pathname.startsWith('/worker/profile')} />
  </>
  )}
 

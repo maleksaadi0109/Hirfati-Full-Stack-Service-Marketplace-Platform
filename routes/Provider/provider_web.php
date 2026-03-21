@@ -51,6 +51,15 @@ Route::middleware(['auth','status'])->group(function () {
         return Inertia::render('worker/MyPosts');
     })->name('worker.posts');
 
+    // Worker Schedule
+    Route::get('/worker/schedule', function () {
+        return Inertia::render('worker/Schedule');
+    })->name('worker.schedule');
+
+    Route::get('/worker/job-requests', function () {
+        return Inertia::render('worker/JobRequests');
+    })->name('worker.job-requests');
+
 });
 
 // Pending Approval (Guest accessible to allow redirect after registration)

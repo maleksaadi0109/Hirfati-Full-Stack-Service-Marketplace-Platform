@@ -47,7 +47,8 @@ class ProviderPostController extends Controller
     }
     public function update(Request $request, string $id)
     {
-         $this->authorize("update",ProviderPost::class);
+        $post=ProviderPost::findOrFail($id);
+         $this->authorize("update",$post);
         $provider = $request->user()->provider;
         $post = ProviderPost::where('id', $id)->where('provider_id', $provider->id)->firstOrFail();
 
@@ -83,7 +84,8 @@ class ProviderPostController extends Controller
 
     public function destroy(Request $request, string $id)
     {
-         $this->authorize("delete",ProviderPost::class);
+        $post=ProviderPost::findOrFail($id);    
+         $this->authorize("delete",$post);
         $provider = $request->user()->provider;
         $post = ProviderPost::where('id', $id)->where('provider_id', $provider->id)->firstOrFail();
 

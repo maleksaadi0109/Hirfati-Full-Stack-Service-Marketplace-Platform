@@ -660,7 +660,7 @@ export default function FindPros() {
                                                                 </Link>
                                                                 <Link
                                                                     href={`/client/providers/${pro.providerId}/book`}
-                                                                    className="inline-flex items-center justify-center rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm font-bold text-orange-700 transition-all hover:bg-orange-100"
+                                                                    className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/15 transition-all outline-none hover:bg-slate-800"
                                                                 >
                                                                     Book
                                                                 </Link>

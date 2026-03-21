@@ -36,7 +36,7 @@ export default function WorkerDashboard({ isAvailable, setIsAvailable }: any) {
  <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-2">
  <div>
  <h2 className="text-2xl font-bold text-slate-900">Work Mode</h2>
- <p className="text-slate-500">Manage your availability and accept new jobs.</p>
+ <p className="text-slate-500">Manage your availability and accept new work.</p>
  </div>
 
  <div className="flex items-center gap-4">
@@ -54,7 +54,7 @@ export default function WorkerDashboard({ isAvailable, setIsAvailable }: any) {
 
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
  <StatCard title="Wallet Balance" value="1,250 LYD" icon={<DollarSign />} trend="Available for withdrawal" color="green" delay={0.1} />
- <StatCard title="Jobs Completed" value="24" icon={<Briefcase />} trend="+3 this week" color="blue" delay={0.2} />
+ <StatCard title="Work Completed" value="24" icon={<Briefcase />} trend="+3 this week" color="blue" delay={0.2} />
  <StatCard title="Response Rate" value="98%" icon={<MessageSquare />} trend="Avg time: 5m" color="orange" delay={0.3} />
  <StatCard title="Rating" value="4.9" icon={<Star />} trend="Top Rated Pro" color="purple" delay={0.4} />
  </div>
@@ -103,7 +103,7 @@ export default function WorkerDashboard({ isAvailable, setIsAvailable }: any) {
  <div className="flex items-center justify-between mb-4">
  <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
  <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
- New Job Requests
+ New Work Requests
  </h2>
  <span className="text-xs font-bold text-slate-500">{MOCK_JOBS.length} Pending</span>
  </div>
@@ -140,7 +140,7 @@ export default function WorkerDashboard({ isAvailable, setIsAvailable }: any) {
 
  <div className="flex gap-3 pt-4 border-t border-slate-100">
  <button className="flex-1 bg-slate-900 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-colors shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2">
- <Check className="w-5 h-5" /> Accept Job
+ <Check className="w-5 h-5" /> Accept Work
  </button>
  <button className="px-6 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-xl font-bold transition-colors flex items-center gap-2">
  <XCircle className="w-5 h-5" /> Decline

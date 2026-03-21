@@ -1,544 +1,313 @@
-Hirfati/
-├── .editorconfig
-├── .env.example
-├── .gitattributes
-├── .github/
-│   └── workflows/
-│       ├── lint.yml
-│       └── tests.yml
-├── .gitignore
-├── .prettierignore
-├── .prettierrc
-├── app/
-│   ├── Actions/
-│   │   ├── Auth/
-│   │   │   ├── LoginUserAction.php
-│   │   │   ├── LogoutUserAction.php
-│   │   │   ├── RegisterStoreAction.php
-│   │   │   ├── ResendRegistrationCodeAction.php
-│   │   │   ├── ResetPasswordAction.php
-│   │   │   ├── SendEmailVerificationCodeAction.php
-│   │   │   ├── SendResetCodeAction.php
-│   │   │   ├── VerifyEmailCodeAction.php
-│   │   │   ├── VerifyRegistrationCodeAction.php
-│   │   │   └── VerifyResetCodeAction.php
-│   │   ├── Fortify/
-│   │   │   ├── CreateNewUser.php
-│   │   │   ├── PasswordValidationRules.php
-│   │   │   └── ResetUserPassword.php
-│   │   └── Location/
-│   │       ├── FindNearByProvidersAction.php
-│   │       └── UpdateUserLocationAction.php
-│   ├── Console/
-│   │   └── Commands/
-│   │       └── CreateAdminCommand.php
-│   ├── Events/
-│   │   └── MessageSent.php
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── Api/
-│   │   │   │   ├── Admin/
-│   │   │   │   │   └── CraftsmanApprovalController.php
-│   │   │   │   ├── Auth/
-│   │   │   │   │   ├── EmailVerificationController.php
-│   │   │   │   │   ├── ForgotPasswordController.php
-│   │   │   │   │   ├── LoginController.php
-│   │   │   │   │   └── RegisterController.php
-│   │   │   │   ├── Client/
-│   │   │   │   │   ├── CustomerAddressController.php
-│   │   │   │   │   ├── DashboardSummaryController.php
-│   │   │   │   │   ├── OrderController.php
-│   │   │   │   │   ├── ProviderDiscoveryController.php
-│   │   │   │   │   ├── ServiceOrderController.php
-│   │   │   │   │   └── UpdateUserInfoController.php
-│   │   │   │   ├── Craftsman/
-│   │   │   │   │   ├── JobRequestController.php
-│   │   │   │   │   └── ProfileController.php
-│   │   │   │   ├── Customer/
-│   │   │   │   │   ├── BookingController.php
-│   │   │   │   │   └── SearchController.php
-│   │   │   │   ├── LocationController.php
-│   │   │   │   ├── Messages/
-│   │   │   │   │   └── MessageController.php
-│   │   │   │   ├── Provider/
-│   │   │   │   │   ├── DashboardSummaryController.php
-│   │   │   │   │   ├── ProviderAddressController.php
-│   │   │   │   │   ├── ProviderController.php
-│   │   │   │   │   ├── ProviderPostController.php
-│   │   │   │   │   └── ResubmitApplicationController.php
-│   │   │   │   └── UserController.php
-│   │   │   ├── Controller.php
-│   │   │   └── Settings/
-│   │   │       ├── PasswordController.php
-│   │   │       ├── ProfileController.php
-│   │   │       └── TwoFactorAuthenticationController.php
-│   │   ├── Middleware/
-│   │   │   ├── CheckRole.php
-│   │   │   ├── HandleAppearance.php
-│   │   │   ├── HandleInertiaRequests.php
-│   │   │   └── Provider/
-│   │   │       ├── CheckProviderStatus.php
-│   │   │       ├── EnsureProviderPending.php
-│   │   │       └── EnsureProviderRejected.php
-│   │   ├── Requests/
-│   │   │   ├── Auth/
-│   │   │   │   ├── ForgotPasswordRequest.php
-│   │   │   │   ├── LoginRequest.php
-│   │   │   │   └── RegisterRequest.php
-│   │   │   ├── Client/
-│   │   │   │   ├── CancelCustomerOrderRequest.php
-│   │   │   │   ├── StoreCustomerAddressRequest.php
-│   │   │   │   ├── StoreCustomerOrderRequest.php
-│   │   │   │   ├── UpdateClientInfoRequest.php
-│   │   │   │   └── UpdateCustomerAddressRequest.php
-│   │   │   ├── Location/
-│   │   │   │   ├── FindNearByProvidersRequeset.php
-│   │   │   │   └── UpdateUserLocationRequest.php
-│   │   │   ├── Messages/
-│   │   │   │   └── SendMessageRequest.php
-│   │   │   ├── Provider/
-│   │   │   │   ├── ProviderRequest.php
-│   │   │   │   └── StoreProviderPostRequest.php
-│   │   │   └── Settings/
-│   │   │       ├── ProfileUpdateRequest.php
-│   │   │       └── TwoFactorAuthenticationRequest.php
-│   │   ├── Resources/
-│   │   │   ├── Admin/
-│   │   │   │   └── CraftsmanResource.php
-│   │   │   ├── Auth/
-│   │   │   │   ├── AdminResource.php
-│   │   │   │   ├── CustomerResource.php
-│   │   │   │   └── ProviderResource.php
-│   │   │   ├── ConversationResource.php
-│   │   │   ├── CustomerOrderResource.php
-│   │   │   ├── MessageResource.php
-│   │   │   ├── ProviderPostResource.php
-│   │   │   └── UserResource.php
-│   │   └── Responses/
-│   │       └── CustomLoginResponse.php
-│   ├── Mail/
-│   │   ├── Auth/
-│   │   │   ├── EmailVerificationCodeMail.php
-│   │   │   ├── SendResetCodeMail.php
-│   │   │   └── WelcomeUserMail.php
-│   │   └── Provider/
-│   │       ├── ApproveMail.php
-│   │       └── RejectedMail.php
-│   ├── Models/
-│   │   ├── Customer.php
-│   │   ├── CustomerAddress.php
-│   │   ├── CustomerOrder.php
-│   │   ├── Message.php
-│   │   ├── Portfolio.php
-│   │   ├── Provider.php
-│   │   ├── ProviderAddress.php
-│   │   ├── ProviderPost.php
-│   │   ├── ProviderPostImage.php
-│   │   └── User.php
-│   ├── modules/
-│   │   ├── Booking/
-│   │   │   └── Models/
-│   │   │       ├── Booking.php
-│   │   │       ├── Category.php
-│   │   │       └── Review.php
-│   │   ├── Message/
-│   │   │   └── Models/
-│   │   │       └── Message.php
-│   │   └── Payment/
-│   │       └── Models/
-│   │           └── Payment.php
-│   ├── Policies/
-│   │   ├── CustomerOrderPolicy.php
-│   │   └── ProviderPostPolicy.php
-│   ├── Providers/
-│   │   ├── AppServiceProvider.php
-│   │   ├── AuthServerProvider.php
-│   │   └── FortifyServiceProvider.php
-│   └── Traits/
-│       └── ApiResponses.php
-├── artisan
-├── bootstrap/
-│   ├── app.php
-│   ├── cache/
-│   │   └── .gitignore
-│   └── providers.php
-├── components.json
-├── composer.json
-├── composer.lock
-├── config/
-│   ├── app.php
-│   ├── auth.php
-│   ├── broadcasting.php
-│   ├── cache.php
-│   ├── database.php
-│   ├── filesystems.php
-│   ├── fortify.php
-│   ├── inertia.php
-│   ├── logging.php
-│   ├── mail.php
-│   ├── queue.php
-│   ├── reverb.php
-│   ├── sanctum.php
-│   ├── services.php
-│   └── session.php
-├── count()
-├── count())
-├── database/
-│   ├── .gitignore
-│   ├── factories/
-│   │   └── UserFactory.php
-│   ├── migrations/
-│   │   ├── 0001_01_01_000000_create_users_table.php
-│   │   ├── 0001_01_01_000001_create_cache_table.php
-│   │   ├── 0001_01_01_000002_create_jobs_table.php
-│   │   ├── 2025_08_26_100418_add_two_factor_columns_to_users_table.php
-│   │   ├── 2026_02_21_121454_create_personal_access_tokens_table.php
-│   │   ├── 2026_02_21_131633_create_customers_table.php
-│   │   ├── 2026_02_21_131634_create_providers_table.php
-│   │   ├── 2026_02_21_165732_create_bookings_table.php
-│   │   ├── 2026_02_21_165732_create_categories_table.php
-│   │   ├── 2026_02_21_165733_create_portfolios_table.php
-│   │   ├── 2026_02_21_165733_create_reviews_table.php
-│   │   ├── 2026_02_21_165736_create_messages_table.php
-│   │   ├── 2026_02_21_214944_create_payments_table.php
-│   │   ├── 2026_02_23_000001_add_application_fields_to_providers_table.php
-│   │   ├── 2026_02_27_133618_add_rate_limiting_to_password_reset_tokens_table.php
-│   │   ├── 2026_02_28_110049_remove_rate_limiting_columns_from_password_reset_tokens_table.php
-│   │   ├── 2026_02_28_141616_add_location_to_users_table.php
-│   │   ├── 2026_02_28_142500_remove_default_address_from_customers_table.php
-│   │   ├── 2026_03_03_151042_add_is_blocked_to_users_table.php
-│   │   ├── 2026_03_13_133333_add_picture_and_birthday_to_users_table.php
-│   │   ├── 2026_03_14_150000_create_customer_addresses_table.php
-│   │   ├── 2026_03_14_160000_add_details_to_customer_addresses_table.php
-│   │   ├── 2026_03_15_120000_create_customer_orders_table.php
-│   │   ├── 2026_03_15_161209_create_messages_table.php
-│   │   ├── 2026_03_16_000000_align_messages_table_for_order_chat.php
-│   │   ├── 2026_03_16_150313_add_file_to__message_table.php
-│   │   ├── 2026_03_16_220815_add_coulum_to_provider_file.php
-│   │   ├── 2026_03_18_154856_create_provider_addresses_table.php
-│   │   ├── 2026_03_18_164718_create_provider_posts_table.php
-│   │   └── 2026_03_18_164721_create_provider_post_images_table.php
-│   └── seeders/
-│       ├── AdminSeeder.php
-│       ├── CustomerOrderTestDataSeeder.php
-│       ├── DatabaseSeeder.php
-│       └── MessageTestDataSeeder.php
-├── eslint.config.js
-├── first())
-├── package-lock.json
-├── package.json
-├── phpunit.xml
-├── public/
-│   ├── .htaccess
-│   ├── apple-touch-icon.png
-│   ├── favicon.ico
-│   ├── favicon.jpg
-│   ├── favicon.svg
-│   ├── ffff.png
-│   ├── fsdff.svg
-│   ├── fsdfsdfsd.ico
-│   ├── images/
-│   │   ├── hero-handyman.jpg
-│   │   └── hirfati-logo.jpg
-│   ├── index.php
-│   ├── logo.svg
-│   ├── robots.txt
-│   └── screenshots/
-│       ├── dashboard.png
-│       ├── home_page.png
-│       ├── landing_page.png
-│       ├── messages.png
-│       ├── my_orders_dashboard.png
-│       ├── profile_edit_page.png
-│       └── profile_page.png
-├── README.md
-├── resources/
-│   ├── css/
-│   │   └── app.css
-│   ├── js/
-│   │   ├── app.tsx
-│   │   ├── components/
-│   │   │   ├── alert-error.tsx
-│   │   │   ├── app-content.tsx
-│   │   │   ├── app-header.tsx
-│   │   │   ├── app-logo-icon.tsx
-│   │   │   ├── app-logo.tsx
-│   │   │   ├── app-shell.tsx
-│   │   │   ├── app-sidebar-header.tsx
-│   │   │   ├── app-sidebar.tsx
-│   │   │   ├── appearance-dropdown.tsx
-│   │   │   ├── appearance-tabs.tsx
-│   │   │   ├── breadcrumbs.tsx
-│   │   │   ├── ClientSidebar.tsx
-│   │   │   ├── delete-user.tsx
-│   │   │   ├── heading-small.tsx
-│   │   │   ├── heading.tsx
-│   │   │   ├── icon.tsx
-│   │   │   ├── ImageGallery.tsx
-│   │   │   ├── input-error.tsx
-│   │   │   ├── nav-footer.tsx
-│   │   │   ├── nav-main.tsx
-│   │   │   ├── nav-user.tsx
-│   │   │   ├── PostCard.tsx
-│   │   │   ├── text-link.tsx
-│   │   │   ├── two-factor-recovery-codes.tsx
-│   │   │   ├── two-factor-setup-modal.tsx
-│   │   │   ├── ui/
-│   │   │   │   ├── alert.tsx
-│   │   │   │   ├── avatar.tsx
-│   │   │   │   ├── badge.tsx
-│   │   │   │   ├── breadcrumb.tsx
-│   │   │   │   ├── button.tsx
-│   │   │   │   ├── card.tsx
-│   │   │   │   ├── checkbox.tsx
-│   │   │   │   ├── collapsible.tsx
-│   │   │   │   ├── dialog.tsx
-│   │   │   │   ├── dropdown-menu.tsx
-│   │   │   │   ├── icon.tsx
-│   │   │   │   ├── input-otp.tsx
-│   │   │   │   ├── input.tsx
-│   │   │   │   ├── label.tsx
-│   │   │   │   ├── navigation-menu.tsx
-│   │   │   │   ├── placeholder-pattern.tsx
-│   │   │   │   ├── select.tsx
-│   │   │   │   ├── separator.tsx
-│   │   │   │   ├── sheet.tsx
-│   │   │   │   ├── sidebar.tsx
-│   │   │   │   ├── skeleton.tsx
-│   │   │   │   ├── spinner.tsx
-│   │   │   │   ├── toggle-group.tsx
-│   │   │   │   ├── toggle.tsx
-│   │   │   │   └── tooltip.tsx
-│   │   │   ├── user-info.tsx
-│   │   │   └── user-menu-content.tsx
-│   │   ├── hooks/
-│   │   │   ├── use-appearance.tsx
-│   │   │   ├── use-clipboard.ts
-│   │   │   ├── use-initials.tsx
-│   │   │   ├── use-mobile-navigation.ts
-│   │   │   ├── use-mobile.tsx
-│   │   │   └── use-two-factor-auth.ts
-│   │   ├── layouts/
-│   │   │   ├── app/
-│   │   │   │   ├── app-header-layout.tsx
-│   │   │   │   └── app-sidebar-layout.tsx
-│   │   │   ├── app-layout.tsx
-│   │   │   ├── auth/
-│   │   │   │   ├── auth-card-layout.tsx
-│   │   │   │   ├── auth-simple-layout.tsx
-│   │   │   │   └── auth-split-layout.tsx
-│   │   │   ├── auth-layout.tsx
-│   │   │   ├── DashboardLayout.tsx
-│   │   │   └── settings/
-│   │   │       └── layout.tsx
-│   │   ├── lib/
-│   │   │   └── utils.ts
-│   │   ├── pages/
-│   │   │   ├── admin/
-│   │   │   │   ├── craftsman-detail.tsx
-│   │   │   │   └── craftsmen.tsx
-│   │   │   ├── auth/
-│   │   │   │   ├── account-suspended.tsx
-│   │   │   │   ├── confirm-password.tsx
-│   │   │   │   ├── forgot-password.tsx
-│   │   │   │   ├── login.tsx
-│   │   │   │   ├── new-reset-password.tsx
-│   │   │   │   ├── Onboarding.tsx
-│   │   │   │   ├── pending-approval.tsx
-│   │   │   │   ├── register.backup.tsx
-│   │   │   │   ├── register.tsx
-│   │   │   │   ├── rejected-approval.tsx
-│   │   │   │   ├── reset-password.tsx
-│   │   │   │   ├── two-factor-challenge.tsx
-│   │   │   │   ├── verify-email.tsx
-│   │   │   │   └── verify-reset-code.tsx
-│   │   │   ├── Billing.tsx
-│   │   │   ├── client/
-│   │   │   │   ├── AddressCreate.tsx
-│   │   │   │   ├── AddressEdit.tsx
-│   │   │   │   ├── BookService.tsx
-│   │   │   │   ├── Dashboard.tsx
-│   │   │   │   ├── ExplorePosts.tsx
-│   │   │   │   ├── FindPros.tsx
-│   │   │   │   ├── Messages.tsx
-│   │   │   │   ├── MyOrders.tsx
-│   │   │   │   ├── OrderDetails.tsx
-│   │   │   │   ├── OrderSuccess.tsx
-│   │   │   │   ├── Profile.tsx
-│   │   │   │   └── ProviderPosts.tsx
-│   │   │   ├── dashboard/
-│   │   │   │   ├── ClientDashboard.tsx
-│   │   │   │   ├── components/
-│   │   │   │   │   ├── ChatInterface.tsx
-│   │   │   │   │   └── DashboardComponents.tsx
-│   │   │   │   └── WorkerDashboard.tsx
-│   │   │   ├── Dashboard.tsx
-│   │   │   ├── Error.tsx
-│   │   │   ├── Favorites.tsx
-│   │   │   ├── FindWork.tsx
-│   │   │   ├── Jobs/
-│   │   │   │   └── Create.tsx
-│   │   │   ├── marketplace/
-│   │   │   │   ├── components/
-│   │   │   │   │   ├── ChatInterface.tsx
-│   │   │   │   │   ├── FloatingShapes.tsx
-│   │   │   │   │   ├── FloatingToolsScene.tsx
-│   │   │   │   │   ├── LandingPage.tsx
-│   │   │   │   │   ├── ListingPage.tsx
-│   │   │   │   │   ├── ProviderProfile.tsx
-│   │   │   │   │   └── ui/
-│   │   │   │   │       ├── accordion.tsx
-│   │   │   │   │       ├── alert-dialog.tsx
-│   │   │   │   │       ├── alert.tsx
-│   │   │   │   │       ├── aspect-ratio.tsx
-│   │   │   │   │       ├── avatar.tsx
-│   │   │   │   │       ├── badge.tsx
-│   │   │   │   │       ├── breadcrumb.tsx
-│   │   │   │   │       ├── button.tsx
-│   │   │   │   │       ├── calendar.tsx
-│   │   │   │   │       ├── card.tsx
-│   │   │   │   │       ├── carousel.tsx
-│   │   │   │   │       ├── chart.tsx
-│   │   │   │   │       ├── checkbox.tsx
-│   │   │   │   │       ├── collapsible.tsx
-│   │   │   │   │       ├── command.tsx
-│   │   │   │   │       ├── context-menu.tsx
-│   │   │   │   │       ├── dialog.tsx
-│   │   │   │   │       ├── drawer.tsx
-│   │   │   │   │       ├── dropdown-menu.tsx
-│   │   │   │   │       ├── form.tsx
-│   │   │   │   │       ├── hover-card.tsx
-│   │   │   │   │       ├── input-otp.tsx
-│   │   │   │   │       ├── input.tsx
-│   │   │   │   │       ├── label.tsx
-│   │   │   │   │       ├── menubar.tsx
-│   │   │   │   │       ├── navigation-menu.tsx
-│   │   │   │   │       ├── pagination.tsx
-│   │   │   │   │       ├── popover.tsx
-│   │   │   │   │       ├── progress.tsx
-│   │   │   │   │       ├── radio-group.tsx
-│   │   │   │   │       ├── resizable.tsx
-│   │   │   │   │       ├── scroll-area.tsx
-│   │   │   │   │       ├── select.tsx
-│   │   │   │   │       ├── separator.tsx
-│   │   │   │   │       ├── sheet.tsx
-│   │   │   │   │       ├── sidebar.tsx
-│   │   │   │   │       ├── skeleton.tsx
-│   │   │   │   │       ├── slider.tsx
-│   │   │   │   │       ├── sonner.tsx
-│   │   │   │   │       ├── switch.tsx
-│   │   │   │   │       ├── table.tsx
-│   │   │   │   │       ├── tabs.tsx
-│   │   │   │   │       ├── textarea.tsx
-│   │   │   │   │       ├── toggle-group.tsx
-│   │   │   │   │       ├── toggle.tsx
-│   │   │   │   │       ├── tooltip.tsx
-│   │   │   │   │       ├── use-mobile.ts
-│   │   │   │   │       └── utils.ts
-│   │   │   │   ├── index.tsx
-│   │   │   │   └── marketplace.css
-│   │   │   ├── MyJobs.tsx
-│   │   │   ├── Orders/
-│   │   │   │   ├── Create.tsx
-│   │   │   │   └── MyOrders.tsx
-│   │   │   ├── Profile/
-│   │   │   │   ├── Edit.tsx
-│   │   │   │   └── Show.tsx
-│   │   │   ├── Pros/
-│   │   │   │   └── Index.tsx
-│   │   │   ├── Reviews.tsx
-│   │   │   ├── settings/
-│   │   │   │   ├── appearance.tsx
-│   │   │   │   ├── Index.tsx
-│   │   │   │   ├── password.tsx
-│   │   │   │   ├── profile.tsx
-│   │   │   │   └── two-factor.tsx
-│   │   │   ├── Wallet.tsx
-│   │   │   ├── welcome.tsx
-│   │   │   └── worker/
-│   │   │       ├── AddressCreate.tsx
-│   │   │       ├── AddressEdit.tsx
-│   │   │       ├── CompleteProfile.tsx
-│   │   │       ├── Dashboard.tsx
-│   │   │       ├── Messages.tsx
-│   │   │       ├── MyPosts.tsx
-│   │   │       └── Profile.tsx
-│   │   ├── ssr.tsx
-│   │   └── types/
-│   │       ├── index.d.ts
-│   │       └── vite-env.d.ts
-│   └── views/
-│       ├── app.blade.php
-│       └── emails/
-│           ├── provider/
-│           │   ├── approved.blade.php
-│           │   └── rejected.blade.php
-│           └── users/
-│               ├── ResetCode.blade.php
-│               ├── verify-email-code.blade.php
-│               └── welcome.blade.php
-├── rewrite_register.cjs
-├── routes/
-│   ├── Admin/
-│   │   └── api_admin.php
-│   ├── Auth/
-│   │   └── api_auth.php
-│   ├── channels.php
-│   ├── console.php
-│   ├── Customer/
-│   │   ├── api_customer.php
-│   │   └── Customer_web.php
-│   ├── Provider/
-│   │   ├── api_provider.php
-│   │   └── provider_web.php
-│   ├── settings.php
-│   └── web.php
-├── storage/
-│   ├── app/
-│   │   ├── .gitignore
-│   │   ├── private/
-│   │   │   └── .gitignore
-│   │   └── public/
-│   │       └── .gitignore
-│   ├── debugbar/
-│   │   └── .gitignore
-│   ├── framework/
-│   │   ├── .gitignore
-│   │   ├── cache/
-│   │   │   ├── .gitignore
-│   │   │   └── data/
-│   │   │       └── .gitignore
-│   │   ├── sessions/
-│   │   │   └── .gitignore
-│   │   ├── testing/
-│   │   │   └── .gitignore
-│   │   └── views/
-│   │       └── .gitignore
-│   └── logs/
-│       └── .gitignore
-├── strip_dark.cjs
-├── tests/
-│   ├── Feature/
-│   │   ├── Auth/
-│   │   │   ├── AuthenticationTest.php
-│   │   │   ├── EmailVerificationTest.php
-│   │   │   ├── PasswordConfirmationTest.php
-│   │   │   ├── PasswordResetTest.php
-│   │   │   ├── RegistrationTest.php
-│   │   │   ├── TwoFactorChallengeTest.php
-│   │   │   └── VerificationNotificationTest.php
-│   │   ├── DashboardTest.php
-│   │   ├── ExampleTest.php
-│   │   └── Settings/
-│   │       ├── PasswordUpdateTest.php
-│   │       ├── ProfileUpdateTest.php
-│   │       └── TwoFactorAuthenticationTest.php
-│   ├── Pest.php
-│   ├── TestCase.php
-│   └── Unit/
-│       └── ExampleTest.php
-├── tsconfig.json
-├── update_register.cjs
-├── value('password'))
-└── vite.config.ts
-s
+# Hirfati — Project Structure Reference
+
+> **Last Updated:** March 2026  
+> A comprehensive map of every directory and key file in the Hirfati codebase.
+
+---
+
+## Root Directory
+
+```
+hirfati/
+├── app/                    # Backend application logic (Laravel)
+├── bootstrap/              # Laravel bootstrap & cache
+├── config/                 # Configuration files
+├── database/               # Migrations, seeders, factories
+├── node_modules/           # Node.js dependencies (gitignored)
+├── public/                 # Web-accessible files, compiled assets
+├── resources/              # Frontend source code + views
+├── routes/                 # All route definitions
+├── storage/                # Logs, cache, uploaded files
+├── tests/                  # PHPUnit tests
+├── vendor/                 # Composer dependencies (gitignored)
+│
+├── .env                    # Environment config (gitignored)
+├── .env.example            # Environment template
+├── .prettierrc             # Prettier formatting config
+├── artisan                 # Laravel CLI entry point
+├── composer.json           # PHP dependencies
+├── components.json         # ShadCN/Radix component config
+├── eslint.config.js        # ESLint config
+├── package.json            # Node.js dependencies
+├── tsconfig.json           # TypeScript config
+├── vite.config.ts          # Vite bundler config
+└── README.md               # Project documentation
+```
+
+---
+
+## `app/` — Backend Application
+
+### `app/Actions/` — Single-Responsibility Action Classes
+```
+Actions/
+├── Auth/
+│   ├── LoginUserAction.php               # Handle user login logic
+│   ├── LogoutUserAction.php              # Handle logout
+│   ├── RegisterStoreAction.php           # Store new registrations
+│   ├── ResendRegistrationCodeAction.php  # Resend verification OTP
+│   ├── ResetPasswordAction.php           # Execute password reset
+│   ├── SendEmailVerificationCodeAction.php
+│   ├── SendResetCodeAction.php           # Send password reset code
+│   ├── VerifyEmailCodeAction.php         # Verify email OTP
+│   ├── VerifyRegistrationCodeAction.php  # Verify registration OTP
+│   └── VerifyResetCodeAction.php         # Verify reset OTP
+├── Fortify/
+│   ├── CreateNewUser.php                 # Fortify user creation
+│   ├── PasswordValidationRules.php       # Password rules trait
+│   └── ResetUserPassword.php             # Fortify password reset
+└── Location/
+    ├── FindNearByProvidersAction.php      # Geolocation search
+    └── UpdateUserLocationAction.php       # Update user coordinates
+```
+
+### `app/Http/Controllers/Api/` — API Controllers
+```
+Api/
+├── Admin/
+│   └── CraftsmanApprovalController.php   # Approve/reject provider apps
+├── Auth/
+│   ├── EmailVerificationController.php   # OTP email verification
+│   ├── ForgotPasswordController.php      # Password recovery flow
+│   ├── LoginController.php               # Login / token generation
+│   └── RegisterController.php            # Multi-step registration
+├── Client/
+│   ├── CustomerAddressController.php     # CRUD customer addresses
+│   ├── DashboardSummaryController.php    # Client dashboard data
+│   ├── OrderController.php               # List/show/cancel orders
+│   ├── ProviderDiscoveryController.php   # Search & browse providers
+│   ├── ServiceOrderController.php        # Create booking orders
+│   └── UpdateUserInfoController.php      # Update customer profile
+├── Messages/
+│   └── MessageController.php             # Real-time chat (send/receive)
+├── Provider/
+│   ├── DashboardSummaryController.php    # Provider dashboard data
+│   ├── ProviderAddressController.php     # Provider address mgmt
+│   ├── ProviderController.php            # Provider profile CRUD
+│   ├── ProviderJobRequestController.php  # View & manage incoming jobs
+│   ├── ProviderPostController.php        # Portfolio post CRUD
+│   ├── ProviderScheduleController.php    # Schedule view & status updates
+│   └── ResubmitApplicationController.php # Re-apply after rejection
+├── LocationController.php                # Shared location endpoints
+└── UserController.php                    # Generic user info
+```
+
+### `app/Http/Middleware/`
+```
+Middleware/
+├── CheckRole.php                 # Gate: ensure user has required role
+├── HandleAppearance.php          # Theme/appearance middleware
+├── HandleInertiaRequests.php     # Share Inertia props (user, flash, etc.)
+└── Provider/
+    ├── CheckProviderStatus.php   # Only approved providers pass
+    ├── EnsureProviderPending.php # Redirect if not pending
+    └── EnsureProviderRejected.php# Redirect if not rejected
+```
+
+### `app/Models/` — Eloquent Models
+```
+Models/
+├── User.php              # Central user (roles: customer/provider/admin)
+├── Customer.php          # Customer profile (belongs to User)
+├── Provider.php          # Provider profile (status: pending/approved/rejected)
+├── CustomerAddress.php   # Saved customer addresses
+├── ProviderAddress.php   # Saved provider addresses
+├── CustomerOrder.php     # Booking orders (status machine)
+├── Message.php           # Chat messages (polymorphic sender)
+├── ProviderPost.php      # Provider portfolio posts
+├── ProviderPostImage.php # Images attached to posts
+└── Portfolio.php         # Legacy portfolio model
+```
+
+### `app/Policies/`
+```
+Policies/
+└── ProviderPostPolicy.php  # Authorization for post update/delete
+```
+
+### `app/Traits/`
+```
+Traits/
+└── ApiResponses.php  # Standardized JSON response helpers (ok, error)
+```
+
+---
+
+## `resources/js/` — Frontend Application
+
+### `resources/js/pages/auth/` — Authentication Pages
+```
+auth/
+├── login.tsx               # Login form with validation
+├── register.tsx            # Multi-step registration wizard
+├── Onboarding.tsx          # Post-registration onboarding
+├── forgot-password.tsx     # Enter email for recovery
+├── verify-reset-code.tsx   # OTP verification for reset
+├── new-reset-password.tsx  # Set new password form
+├── verify-email.tsx        # Email OTP verification
+├── confirm-password.tsx    # Confirm before sensitive actions
+├── two-factor-challenge.tsx# 2FA challenge page
+├── pending-approval.tsx    # Waiting screen for pending providers
+├── rejected-approval.tsx   # Rejection notice + resubmit option
+└── account-suspended.tsx   # Suspended account notice
+```
+
+### `resources/js/pages/client/` — Customer Pages
+```
+client/
+├── Dashboard.tsx       # Customer home — stats, recent orders, quick actions
+├── FindPros.tsx        # Browse & search verified providers
+├── BookService.tsx     # Book a service (date, time, address, budget)
+├── MyOrders.tsx        # Order history with status tracking
+├── OrderDetails.tsx    # Single order detail view
+├── OrderSuccess.tsx    # Post-booking success confirmation
+├── ExplorePosts.tsx    # Browse provider portfolio posts
+├── ProviderPosts.tsx   # Individual provider portfolio gallery
+├── Messages.tsx        # Real-time chat with providers
+├── Profile.tsx         # Customer profile editor
+├── AddressCreate.tsx   # Add new saved address (with map)
+└── AddressEdit.tsx     # Edit existing address
+```
+
+### `resources/js/pages/worker/` — Provider Pages
+```
+worker/
+├── Dashboard.tsx         # Provider workspace — earnings, activity, stats
+├── JobRequests.tsx       # Manage incoming bookings (accept/decline/start/complete)
+├── Schedule.tsx          # Calendar schedule with day/week views
+├── MyPosts.tsx           # Portfolio post management (CRUD)
+├── Messages.tsx          # Chat with customers
+├── Profile.tsx           # Provider profile editor (skills, bio, rates)
+├── CompleteProfile.tsx   # First-time profile completion wizard
+├── AddressCreate.tsx     # Provider address creation
+└── AddressEdit.tsx       # Provider address editing
+```
+
+### `resources/js/pages/admin/` — Admin Pages
+```
+admin/
+├── craftsmen.tsx          # Provider list with approval controls
+└── craftsman-detail.tsx   # Provider detail view + document verification
+```
+
+### `resources/js/layouts/`
+```
+layouts/
+└── DashboardLayout.tsx   # Shared sidebar layout (role-aware nav)
+```
+
+### `resources/js/components/`
+```
+components/
+└── PostCard.tsx          # Reusable provider post / portfolio card
+    ...                   # Additional shared UI components
+```
+
+---
+
+## `routes/` — Route Definitions
+
+```
+routes/
+├── Auth/
+│   └── auth.php                   # Login, register, verify, reset
+├── Customer/
+│   ├── api_customer.php           # Customer API (orders, addresses, discovery)
+│   └── Customer_web.php           # Customer Inertia pages
+├── Provider/
+│   ├── api_provider.php           # Provider API (posts, schedule, job requests)
+│   └── provider_web.php           # Provider Inertia pages
+├── Admin/
+│   ├── admin_api.php              # Admin API (approvals)
+│   └── admin_web.php              # Admin Inertia pages
+├── web.php                        # Global routes (landing, home redirect)
+├── channels.php                   # Broadcasting channel auth
+├── console.php                    # Artisan commands
+└── settings.php                   # Settings routes
+```
+
+### Key API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/register` | Register new user |
+| `POST` | `/api/auth/login` | Login & get token |
+| `GET` | `/api/client/orders` | List customer orders |
+| `POST` | `/api/client/orders` | Create booking |
+| `GET` | `/api/client/find-providers` | Search providers |
+| `GET` | `/api/provider/job-requests` | Provider's incoming jobs |
+| `PATCH` | `/api/provider/job-requests/{id}/status` | Update job status |
+| `GET` | `/api/provider/schedule` | Provider schedule |
+| `GET` | `/api/provider/posts` | Provider portfolio |
+| `POST` | `/api/client/messages/initialize` | Start conversation |
+| `POST` | `/api/admin/craftsmen/{id}/approve` | Approve provider |
+
+---
+
+## `database/` — Database Layer
+
+```
+database/
+├── migrations/          # Schema definitions (users, providers, orders, etc.)
+├── seeders/             # Test data generators
+└── factories/           # Model factories for testing
+```
+
+### Core Tables
+
+| Table | Purpose |
+|-------|---------|
+| `users` | All users (name, email, role, 2FA) |
+| `customers` | Customer profiles (linked to users) |
+| `providers` | Provider profiles (status, profession, documents) |
+| `customer_orders` | Bookings with status machine |
+| `customer_addresses` | Saved customer locations |
+| `provider_addresses` | Saved provider locations |
+| `messages` | Chat messages |
+| `provider_posts` | Portfolio posts |
+| `provider_post_images` | Post image attachments |
+
+---
+
+## `public/` — Public Assets
+
+```
+public/
+├── screenshots/         # App screenshots for documentation
+│   ├── Posts.png
+│   ├── admin_page.png
+│   ├── chat.png
+│   ├── find_provider.png
+│   ├── jobrequest.png
+│   ├── profile.png
+│   ├── providerdashboard.png
+│   ├── schedule.png
+│   └── verficaiton_documant_check.png
+├── storage/             # Symlink to storage/app/public
+├── build/               # Compiled Vite assets (production)
+└── index.php            # Application entry point
+```
+
+---
+
+## Order Status Flow
+
+```
+pending ──→ confirmed ──→ in_progress ──→ completed
+   │             │
+   └── cancelled └── cancelled
+```
+
+**Transitions enforced by `ProviderJobRequestController`:**
+- `pending` → `confirmed` or `cancelled`
+- `confirmed` → `in_progress` or `cancelled`
+- `in_progress` → `completed`
+
+---
+
+## Provider Approval Flow
+
+```
+registered → email_verified → profile_completed → pending_review → approved
+                                                                 → rejected → can_resubmit
+```

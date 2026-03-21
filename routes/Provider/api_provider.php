@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Provider\ResubmitApplicationController;
 use App\Http\Controllers\Api\Provider\ProviderController;
 use App\Http\Controllers\Api\Provider\ProviderPostController;
+use App\Http\Controllers\Api\Provider\ProviderScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,18 @@ Route::middleware(['auth:sanctum', 'role:provider'])->prefix('provider')->group(
     // Dashboard Summary
     Route::get('/dashboard-summary', [\App\Http\Controllers\Api\Provider\DashboardSummaryController::class, '__invoke']);
 
+    // Provider order actions
+    Route::patch('/orders/{order}/status', [\App\Http\Controllers\Api\Provider\ProviderOrderController::class, 'updateStatus']);
+
     // Addresses
     Route::apiResource('/addresses', \App\Http\Controllers\Api\Provider\ProviderAddressController::class);
     Route::put('/addresses/{address}/default', [\App\Http\Controllers\Api\Provider\ProviderAddressController::class, 'setDefault']);
+    
+    // Schedule
+    Route::get('/schedule', [\App\Http\Controllers\Api\Provider\ProviderScheduleController::class, 'index']);
+    Route::patch('/schedule/{order}/status', [\App\Http\Controllers\Api\Provider\ProviderScheduleController::class, 'updateStatus']);
+
+    // Job Requests
+    Route::get('/job-requests', [\App\Http\Controllers\Api\Provider\ProviderJobRequestController::class, 'index']);
+    Route::patch('/job-requests/{order}/status', [\App\Http\Controllers\Api\Provider\ProviderJobRequestController::class, 'updateStatus']);
 });
