@@ -192,6 +192,12 @@ export default function ProviderPosts({ providerId }: ProviderPostsProps) {
                                     Contact
                                 </button>
                                 <Link
+                                    href={`/client/providers/${providerId}/book`}
+                                    className="rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-orange-600/20 transition-all hover:bg-orange-700"
+                                >
+                                    Booking
+                                </Link>
+                                <Link
                                     href={`/client/providers/${providerId}`}
                                     className="rounded-xl bg-orange-50 px-6 py-2.5 text-sm font-bold text-orange-600 transition-all hover:bg-orange-100"
                                 >

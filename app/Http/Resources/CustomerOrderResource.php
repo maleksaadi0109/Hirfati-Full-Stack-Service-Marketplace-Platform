@@ -41,6 +41,12 @@ class CustomerOrderResource extends JsonResource
             'total' => (float) $this->total,
             'payment' => ucfirst($this->payment_status),
             'progress' => $statusProgress[$this->status] ?? 0,
+            'proPicture' => $this->provider?->user?->picture 
+                ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->provider->user->picture) 
+                : null,
+            'customerPicture' => $this->customer?->user?->picture 
+                ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->customer->user->picture) 
+                : null,
             'createdAt' => $this->created_at->toISOString(),
         ];
     }

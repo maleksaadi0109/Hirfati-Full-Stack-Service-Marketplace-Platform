@@ -6,6 +6,7 @@ interface ProviderProfileProps {
   providerId: string;
   onBack: () => void;
   onChatNow: (providerId: string) => void;
+  onBook: (providerId: string) => void;
 }
 
 const providerData: Record<string, any> = {
@@ -99,7 +100,7 @@ const providerData: Record<string, any> = {
   },
 };
 
-export function ProviderProfile({ providerId, onBack, onChatNow }: ProviderProfileProps) {
+export function ProviderProfile({ providerId, onBack, onChatNow, onBook }: ProviderProfileProps) {
   const provider = providerData[providerId] || providerData['1'];
 
   return (
@@ -152,13 +153,22 @@ export function ProviderProfile({ providerId, onBack, onChatNow }: ProviderProfi
                   </div>
                 </div>
 
-                <button
-                  onClick={() => onChatNow(providerId)}
-                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 justify-center"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Chat Now
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => onChatNow(providerId)}
+                    className="px-8 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 justify-center"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Chat Now
+                  </button>
+                  <button
+                    onClick={() => onBook(providerId)}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 justify-center"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    Book Now
+                  </button>
+                </div>
               </div>
 
               {/* Stats */}
@@ -291,10 +301,17 @@ export function ProviderProfile({ providerId, onBack, onChatNow }: ProviderProfi
               <div className="pt-6 border-t border-gray-200">
                 <button
                   onClick={() => onChatNow(providerId)}
-                  className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mb-3"
+                  className="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 mb-3"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Start Chat
+                </button>
+                <button
+                  onClick={() => onBook(providerId)}
+                  className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mb-3 shadow-lg shadow-blue-200"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Book Now
                 </button>
                 <button className="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                   Request Quote

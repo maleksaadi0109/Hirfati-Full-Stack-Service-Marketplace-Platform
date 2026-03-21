@@ -36,6 +36,7 @@ interface ClientOrder {
     total: number;
     payment: 'Paid' | 'Pending';
     progress: number;
+    proPicture?: string;
 }
 
 const tabs: Array<{ key: 'all' | OrderStatus; label: string }> = [
@@ -91,6 +92,7 @@ export default function MyOrders() {
                             ? 'Paid'
                             : 'Pending') as 'Paid' | 'Pending',
                         progress: Number(order.progress ?? 0),
+                        proPicture: order.proPicture as string,
                     }),
                 );
 
@@ -215,7 +217,12 @@ export default function MyOrders() {
                                             duration: 0.35,
                                             delay: idx * 0.06,
                                         }}
-                                        className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_22px_55px_-40px_rgba(15,23,42,0.45)] sm:p-6"
+                                        onClick={() =>
+                                            router.get(
+                                                `/client/orders/${order.id}`,
+                                            )
+                                        }
+                                        className="group relative cursor-pointer overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_22px_55px_-40px_rgba(15,23,42,0.45)] transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-orange-200/20 sm:p-6"
                                     >
                                         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(251,146,60,0.12),_transparent_28%)]" />
 
@@ -244,11 +251,31 @@ export default function MyOrders() {
                                         </div>
 
                                         <div className="relative mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                            <InfoPill
-                                                icon={User}
-                                                label="Pro"
-                                                value={order.proName}
-                                            />
+                                            <div className="rounded-xl border border-slate-100 bg-white px-3 py-2.5">
+                                                <p className="flex items-center gap-1 text-[10px] font-bold tracking-[0.16em] text-slate-400 uppercase">
+                                                    <User className="h-3.5 w-3.5" />
+                                                    Pro
+                                                </p>
+                                                <div className="mt-1 flex items-center gap-2 min-w-0">
+                                                    <div className="h-6 w-6 flex-shrink-0 overflow-hidden rounded-md border border-slate-100 bg-slate-50">
+                                                        {order.proPicture ? (
+                                                            <img
+                                                                src={
+                                                                    order.proPicture
+                                                                }
+                                                                className="h-full w-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-full w-full items-center justify-center text-slate-300">
+                                                                <User className="h-3 w-3" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <p className="truncate text-sm font-bold text-slate-700">
+                                                        {order.proName}
+                                                    </p>
+                                                </div>
+                                            </div>
                                             <InfoPill
                                                 icon={Calendar}
                                                 label="Date"

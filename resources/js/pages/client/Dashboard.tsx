@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import {
     ArrowRight,
@@ -18,8 +19,31 @@ import {
     Wind,
     Zap,
 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../../layouts/DashboardLayout';
+
+type ClientDashboardSummary = {
+    metrics?: {
+        pending_quotes?: number;
+        unread_messages?: number;
+        completed_orders?: number;
+    };
+    next_order?: {
+        id: number;
+        service: string;
+        status: string;
+        scheduled_at?: string | null;
+        provider_name?: string | null;
+    } | null;
+    recent_orders?: Array<{
+        id: number;
+        service: string;
+        status: string;
+        scheduled_at?: string | null;
+        total: number;
+        provider_name?: string | null;
+    }>;
+};
 
 const ACTIVE_JOB = {
     id: 101,
@@ -131,6 +155,193 @@ const RECOMMENDED_PROS = [
 ];
 
 export default function ClientDashboard() {
+    const [orders, setOrders] = useState<any[]>([]);
+    const [conversations, setConversations] = useState<any[]>([]);
+    const [recommendedProviders, setRecommendedProviders] = useState<any[]>([]);
+    const [summary, setSummary] = useState<ClientDashboardSummary | null>(null);
+
+    const authHeaders = useMemo(() => {
+        if (typeof window === 'undefined') return undefined;
+        const token = localStorage.getItem('access_token');
+        return token ? { Authorization: `Bearer ${token}` } : undefined;
+    }, []);
+
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            try {
+                const [ordersRes, messagesRes, providersRes, summaryRes] =
+                    await Promise.all([
+                        axios.get('/api/client/orders', {
+                            headers: authHeaders,
+                        }),
+                        axios.get('/api/client/messages', {
+                            headers: authHeaders,
+                        }),
+                        axios.get('/api/client/providers?sort=latest', {
+                            headers: authHeaders,
+                        }),
+                        axios.get('/api/client/dashboard-summary', {
+                            headers: authHeaders,
+                        }),
+                    ]);
+
+                const orderItems =
+                    ordersRes.data?.data?.orders?.data ??
+                    ordersRes.data?.data?.orders ??
+                    [];
+                const messageItems =
+                    messagesRes.data?.data?.conversations?.data ??
+                    messagesRes.data?.data?.conversations ??
+                    [];
+                const providerItems =
+                    providersRes.data?.providers?.data ??
+                    providersRes.data?.providers ??
+                    [];
+                const summaryData = summaryRes.data?.data ?? null;
+
+                setOrders(Array.isArray(orderItems) ? orderItems : []);
+                setConversations(
+                    Array.isArray(messageItems) ? messageItems : [],
+                );
+                setRecommendedProviders(
+                    Array.isArray(providerItems)
+                        ? providerItems.slice(0, 6)
+                        : [],
+                );
+                setSummary(summaryData);
+            } catch {
+                setOrders([]);
+                setConversations([]);
+                setRecommendedProviders([]);
+                setSummary(null);
+            }
+        };
+
+        loadDashboardData();
+    }, [authHeaders]);
+
+    const ACTIVE_JOB = useMemo(() => {
+        const nextOrder = summary?.next_order;
+        if (nextOrder?.id) {
+            const date = nextOrder.scheduled_at
+                ? new Date(nextOrder.scheduled_at)
+                : null;
+
+            return {
+                id: nextOrder.id,
+                service: nextOrder.service || 'Service Request',
+                pro: nextOrder.provider_name || 'Professional',
+                status: nextOrder.status || 'pending',
+                arrival: date
+                    ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                    : 'Scheduled soon',
+                image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=900&q=80',
+                icon: <Wind className="h-8 w-8 text-orange-500" />,
+                orderId: nextOrder.id,
+            };
+        }
+
+        const activeOrder = orders.find((o) =>
+            ['pending', 'confirmed', 'in_progress'].includes(o.status),
+        );
+
+        if (!activeOrder) {
+            return {
+                id: 0,
+                service: 'No Active Service',
+                pro: 'Find a professional to start',
+                status: 'No Active Job',
+                arrival: 'Pick a provider and book now',
+                image: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80',
+                icon: <Wind className="h-8 w-8 text-orange-500" />,
+                orderId: null,
+            };
+        }
+
+        return {
+            id: activeOrder.id,
+            service: activeOrder.service,
+            pro: activeOrder.proName,
+            status: activeOrder.status,
+            arrival: `${activeOrder.date} ${activeOrder.time}`,
+            image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=900&q=80',
+            icon: <Wind className="h-8 w-8 text-orange-500" />,
+            orderId: activeOrder.id,
+        };
+    }, [orders, summary]);
+
+    const MOCK_ORDERS = useMemo(() => {
+        const recentFromSummary = summary?.recent_orders ?? [];
+        if (recentFromSummary.length > 0) {
+            return recentFromSummary.slice(0, 6).map((o) => ({
+                id: o.id,
+                service: o.service,
+                status: o.status,
+                date: o.scheduled_at
+                    ? new Date(o.scheduled_at).toLocaleDateString()
+                    : 'Recent',
+                price: `${Number(o.total ?? 0).toFixed(2)} LYD`,
+                pro: o.provider_name || 'Professional',
+                image: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=400&q=80',
+            }));
+        }
+
+        return orders.slice(0, 6).map((o) => ({
+            id: o.id,
+            service: o.service,
+            status: o.status,
+            date: o.date,
+            price: `${Number(o.total ?? 0).toFixed(2)} LYD`,
+            pro: o.proName,
+            image: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=400&q=80',
+        }));
+    }, [orders, summary]);
+
+    const PENDING_MESSAGES = useMemo(
+        () =>
+            conversations.slice(0, 3).map((c) => ({
+                id: c.orderId,
+                sender: c.contact?.name || 'Professional',
+                text:
+                    c.lastMessage ||
+                    `New message about ${c.service || 'your request'}`,
+                time: c.lastMessageAt
+                    ? new Date(c.lastMessageAt).toLocaleDateString()
+                    : 'Recently',
+                avatar:
+                    c.contact?.avatar ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${c.contact?.id || c.orderId}`,
+                orderId: c.orderId,
+            })),
+        [conversations],
+    );
+
+    const RECOMMENDED_PROS = useMemo(
+        () =>
+            recommendedProviders.map((p: any, index: number) => ({
+                id: p.providerId || p.id,
+                name:
+                    `${p.firstName || ''} ${p.lastName || ''}`.trim() ||
+                    'Professional',
+                profession: p.profession || 'Service Professional',
+                rating: p.rating || 4.8,
+                jobs: p.completed_jobs || index + 12,
+                verified: !!p.verificationDocumentPath,
+                avatar:
+                    p.picture ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.providerId || p.id}`,
+                cover: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=600&q=80',
+                providerId: p.providerId,
+            })),
+        [recommendedProviders],
+    );
+
+    const pendingQuotesCount = Number(summary?.metrics?.pending_quotes ?? 0);
+    const unreadMessagesCount = Number(summary?.metrics?.unread_messages ?? 0);
+    const completedOrdersCount = Number(
+        summary?.metrics?.completed_orders ?? 0,
+    );
+
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             router.get('/client/find-pros', { search: e.currentTarget.value });
@@ -248,13 +459,13 @@ export default function ClientDashboard() {
 
                             <div className="rounded-[1.8rem] border border-white/80 bg-white/85 p-5 shadow-sm">
                                 <p className="text-[11px] font-black tracking-[0.18em] text-slate-400 uppercase">
-                                    Saved time
+                                    Completed Orders
                                 </p>
                                 <p className="mt-2 text-3xl font-black text-slate-950">
-                                    8.5h
+                                    {completedOrdersCount}
                                 </p>
                                 <p className="mt-1 text-sm font-medium text-slate-500">
-                                    handled for you this month
+                                    finished service requests
                                 </p>
                             </div>
 
@@ -273,8 +484,8 @@ export default function ClientDashboard() {
                                     ))}
                                 </div>
                                 <p className="mt-3 text-sm font-medium text-slate-300">
-                                    Your top-rated local experts are one tap
-                                    away.
+                                    {unreadMessagesCount} unread messages •{' '}
+                                    {pendingQuotesCount} pending quotes.
                                 </p>
                             </div>
                         </div>
@@ -314,15 +525,42 @@ export default function ClientDashboard() {
                                     </div>
 
                                     <div className="mt-8 flex flex-wrap gap-3">
-                                        <button className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-orange-500/30 transition-all hover:bg-orange-500">
+                                        <button
+                                            onClick={() =>
+                                                ACTIVE_JOB.orderId
+                                                    ? router.visit(
+                                                          `/client/orders/${ACTIVE_JOB.orderId}`,
+                                                      )
+                                                    : router.visit(
+                                                          '/client/find-pros',
+                                                      )
+                                            }
+                                            className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-orange-500/30 transition-all hover:bg-orange-500"
+                                        >
                                             Track Progress
                                             <ArrowRight className="h-4 w-4" />
                                         </button>
-                                        <button className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-5 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all hover:bg-white/15">
+                                        <button
+                                            onClick={() =>
+                                                ACTIVE_JOB.orderId &&
+                                                router.visit(
+                                                    `/client/messages?order=${ACTIVE_JOB.orderId}`,
+                                                )
+                                            }
+                                            className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-5 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all hover:bg-white/15"
+                                        >
                                             <Phone className="h-4 w-4" />
                                             Call Pro
                                         </button>
-                                        <button className="inline-flex items-center gap-2 rounded-2xl border border-green-500/20 bg-green-500/15 px-5 py-3.5 text-sm font-bold text-green-300 transition-all hover:bg-green-500/20">
+                                        <button
+                                            onClick={() =>
+                                                ACTIVE_JOB.orderId &&
+                                                router.visit(
+                                                    `/client/messages?order=${ACTIVE_JOB.orderId}`,
+                                                )
+                                            }
+                                            className="inline-flex items-center gap-2 rounded-2xl border border-green-500/20 bg-green-500/15 px-5 py-3.5 text-sm font-bold text-green-300 transition-all hover:bg-green-500/20"
+                                        >
                                             <MessageCircle className="h-4 w-4" />
                                             WhatsApp
                                         </button>
@@ -378,7 +616,8 @@ export default function ClientDashboard() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.08 }}
-                                        className="group flex items-center justify-between gap-4 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white p-4 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.3)] transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5"
+                                        onClick={() => router.visit(`/client/orders/${order.id}`)}
+                                        className="group flex cursor-pointer items-center justify-between gap-4 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white p-4 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.3)] transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-md sm:p-5"
                                     >
                                         <div className="flex min-w-0 items-center gap-4">
                                             <div className="h-20 w-20 overflow-hidden rounded-[1.4rem] border border-slate-100 bg-slate-100">
@@ -415,7 +654,13 @@ export default function ClientDashboard() {
                                                     Paid
                                                 </div>
                                             </div>
-                                            <button className="rounded-2xl border border-orange-100 bg-orange-50 px-5 py-3 text-xs font-black text-orange-600 transition-all hover:bg-orange-600 hover:text-white">
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Add rebook logic if needed
+                                                }}
+                                                className="rounded-2xl border border-orange-100 bg-orange-50 px-5 py-3 text-xs font-black text-orange-600 transition-all hover:bg-orange-600 hover:text-white"
+                                            >
                                                 Rebook
                                             </button>
                                         </div>
@@ -440,7 +685,8 @@ export default function ClientDashboard() {
                                         Pending Quotes
                                     </h2>
                                     <p className="text-sm font-medium text-slate-500">
-                                        Reply quickly to secure your slot.
+                                        {pendingQuotesCount} waiting for your
+                                        reply.
                                     </p>
                                 </div>
                             </div>
@@ -469,7 +715,14 @@ export default function ClientDashboard() {
                                                 <p className="mt-2 text-sm leading-6 font-medium text-slate-600">
                                                     {msg.text}
                                                 </p>
-                                                <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-orange-200 bg-white px-4 py-2.5 text-xs font-black tracking-[0.14em] text-orange-600 uppercase transition-all hover:bg-orange-600 hover:text-white">
+                                                <button
+                                                    onClick={() =>
+                                                        router.visit(
+                                                            `/client/messages?order=${msg.orderId}`,
+                                                        )
+                                                    }
+                                                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-orange-200 bg-white px-4 py-2.5 text-xs font-black tracking-[0.14em] text-orange-600 uppercase transition-all hover:bg-orange-600 hover:text-white"
+                                                >
                                                     View Quote
                                                     <ArrowRight className="h-3.5 w-3.5" />
                                                 </button>
@@ -512,8 +765,8 @@ export default function ClientDashboard() {
                                         </div>
 
                                         <div className="relative px-5 pb-5">
-                                            <div className="-mt-8 flex items-end gap-4">
-                                                <div className="relative h-16 w-16 overflow-hidden rounded-[1.3rem] border-4 border-white bg-white shadow-md">
+                                            <div className="flex items-end gap-4">
+                                                <div className="relative -mt-8 h-16 w-16 overflow-hidden rounded-[1.3rem] border-4 border-white bg-white shadow-md">
                                                     <img
                                                         src={pro.avatar}
                                                         alt={pro.name}
@@ -526,7 +779,7 @@ export default function ClientDashboard() {
                                                     )}
                                                 </div>
                                                 <div className="pb-1">
-                                                    <h3 className="text-lg font-black text-slate-950 transition-colors group-hover:text-orange-600">
+                                                    <h3 className="text-lg font-black text-slate-900 transition-colors group-hover:text-orange-600">
                                                         {pro.name}
                                                     </h3>
                                                     <p className="text-sm font-medium text-slate-500">
@@ -541,7 +794,15 @@ export default function ClientDashboard() {
                                                     <Star className="h-4 w-4 fill-orange-400 text-orange-400" />
                                                     {pro.rating}
                                                 </div>
-                                                <button className="rounded-xl bg-slate-50 p-3 text-slate-400 transition-all hover:bg-orange-50 hover:text-orange-600">
+                                                <button
+                                                    onClick={() =>
+                                                        pro.providerId &&
+                                                        router.visit(
+                                                            `/client/providers/${pro.providerId}`,
+                                                        )
+                                                    }
+                                                    className="rounded-xl bg-slate-50 p-3 text-slate-400 transition-all hover:bg-orange-50 hover:text-orange-600"
+                                                >
                                                     <ChevronRight className="h-5 w-5" />
                                                 </button>
                                             </div>

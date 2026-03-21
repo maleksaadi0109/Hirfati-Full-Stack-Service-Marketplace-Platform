@@ -17,7 +17,7 @@ Route::middleware('auth:sanctum','role:customer')->group(function () {
 
     // Order Routes
     Route::get('/client/orders', [\App\Http\Controllers\Api\Client\OrderController::class, 'index']);
-    Route::post('/client/orders', [\App\Http\Controllers\Api\Client\OrderController::class, 'store']);
+    Route::post('/client/orders', [\App\Http\Controllers\Api\Client\ServiceOrderController::class, 'store']);
     Route::get('/client/orders/{order}', [\App\Http\Controllers\Api\Client\OrderController::class, 'show']);
     Route::patch('/client/orders/{order}/cancel', [\App\Http\Controllers\Api\Client\OrderController::class, 'cancel']);
 
@@ -34,4 +34,5 @@ Route::middleware('auth:sanctum','role:customer')->group(function () {
     Route::get('/client/posts', [\App\Http\Controllers\Api\Provider\ProviderPostController::class, 'customerAllPosts']);
     Route::get('/client/providers/{provider}/posts', [\App\Http\Controllers\Api\Provider\ProviderPostController::class, 'customerProviderPosts']);
     Route::get('/client/providers/{provider}', [\App\Http\Controllers\Api\Provider\ProviderController::class, 'showCustomerProfile']);
+    Route::get('/client/dashboard-summary', [\App\Http\Controllers\Api\Client\DashboardSummaryController::class, '__invoke']);
 });

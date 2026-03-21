@@ -32,6 +32,9 @@ Route::middleware(['auth:sanctum', 'role:provider'])->prefix('provider')->group(
     Route::put('/posts/{post}', [ProviderPostController::class, 'update']);
     Route::delete('/posts/{post}', [ProviderPostController::class, 'destroy']);
 
+    // Dashboard Summary
+    Route::get('/dashboard-summary', [\App\Http\Controllers\Api\Provider\DashboardSummaryController::class, '__invoke']);
+
     // Addresses
     Route::apiResource('/addresses', \App\Http\Controllers\Api\Provider\ProviderAddressController::class);
     Route::put('/addresses/{address}/default', [\App\Http\Controllers\Api\Provider\ProviderAddressController::class, 'setDefault']);

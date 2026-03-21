@@ -48,6 +48,12 @@ export default function Marketplace() {
         });
     };
 
+    const handleBookService = (providerId: string) => {
+        requireAuth(() => {
+            router.visit(`/client/providers/${providerId}/book`);
+        });
+    };
+
     const handleBack = () => {
         if (currentPage === 'profile' || currentPage === 'chat') {
             setCurrentPage('listing');
@@ -61,7 +67,7 @@ export default function Marketplace() {
             <Head title="Hirfati - Home Services" />
             <div className="flex flex-col" style={{ minHeight: '100%', flex: '1 0 auto' }}>
                 {currentPage === 'landing' && (
-                    <LandingPage onSearch={handleSearch} onNavigate={setCurrentPage} />
+                    <LandingPage onSearch={handleSearch} onNavigate={(page: any) => setCurrentPage(page)} />
                 )}
                 {currentPage === 'listing' && (
                     <ListingPage
@@ -76,6 +82,7 @@ export default function Marketplace() {
                         providerId={selectedProvider}
                         onBack={handleBack}
                         onChatNow={handleChatNow}
+                        onBook={handleBookService}
                     />
                 )}
                 {currentPage === 'chat' && selectedProvider && (

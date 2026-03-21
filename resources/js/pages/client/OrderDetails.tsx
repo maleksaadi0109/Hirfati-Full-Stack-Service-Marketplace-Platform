@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import {
@@ -40,6 +40,8 @@ interface OrderData {
     progress: number;
     notes?: string;
     createdAt?: string;
+    proPicture?: string;
+    customerPicture?: string;
 }
 
 export default function OrderDetails({ orderId }: OrderDetailsProps) {
@@ -181,8 +183,17 @@ export default function OrderDetails({ orderId }: OrderDetailsProps) {
                         <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
                             <h2 className="text-xl font-black text-slate-900">Service Provider</h2>
                             <div className="mt-6 flex flex-wrap items-center gap-6">
-                                <div className="h-20 w-20 rounded-[1.5rem] bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-400">
-                                    <User className="h-10 w-10" />
+                                <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-[1.5rem] border-2 border-white bg-slate-100 shadow-md">
+                                    {order.proPicture ? (
+                                        <img
+                                            src={order.proPicture} // It's already a full URL from Resource
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center bg-slate-50 text-slate-400">
+                                            <User className="h-10 w-10" />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex-1 min-w-[200px]">
                                     <h3 className="text-xl font-black text-slate-900">{order.proName}</h3>
@@ -195,7 +206,10 @@ export default function OrderDetails({ orderId }: OrderDetailsProps) {
                                         <span className="text-sm font-medium text-slate-500">Professional Technician</span>
                                     </div>
                                 </div>
-                                <button className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-black text-white transition-all hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-200">
+                                <button 
+                                    onClick={() => router.visit(`/client/messages?order=${order.id}`)}
+                                    className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-black text-white transition-all hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-200"
+                                >
                                     <MessageSquare className="h-4 w-4" />
                                     Send Message
                                 </button>

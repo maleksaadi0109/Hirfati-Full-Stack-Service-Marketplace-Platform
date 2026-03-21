@@ -56,6 +56,18 @@ use Inertia\Inertia;
          ]);
      })->name('client.providers.show');
 
+     Route::get('/client/providers/{provider}/book', function (string $provider) {
+         return Inertia::render('client/BookService', [
+             'providerId' => $provider,
+         ]);
+     })->name('client.providers.book');
+
+     Route::get('/client/orders/{order}/success', function (string $order) {
+         return Inertia::render('client/OrderSuccess', [
+             'orderId' => $order,
+         ]);
+     })->name('client.orders.success');
+
      Route::get('/client/providers/{provider}/posts', function (string $provider) {
          return redirect()->route('client.providers.show', ['provider' => $provider]);
      })->name('client.providers.posts');
