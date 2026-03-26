@@ -60,6 +60,11 @@ Route::middleware(['auth','status'])->group(function () {
         return Inertia::render('worker/JobRequests');
     })->name('worker.job-requests');
 
+    // Subscription
+    Route::get('/worker/subscription', function () {
+        return Inertia::render('worker/Subscription');
+    })->name('worker.subscription');
+
 });
 
 // Pending Approval (Guest accessible to allow redirect after registration)

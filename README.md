@@ -39,6 +39,11 @@
 |:-:|:-:|
 | ![Admin](public/screenshots/admin_page.png) | ![Verification](public/screenshots/verficaiton_documant_check.png) |
 
+### Stripe Subscription
+| Subscription Plans |
+|:-:|
+| ![Subscription](public/screenshots/sprite.png) |
+
 </div>
 
 ---
@@ -60,10 +65,17 @@
 - **Portfolio / Posts** — Showcase completed work with image galleries to attract new customers.
 - **Profile Management** — Full profile editor with skills, bio, hourly rates, and profile picture.
 - **Address Management** — Set service areas and manage work locations.
+- **Subscription Plans** — Choose from Starter (free), Pro ($29/mo), or Elite ($79/mo) to unlock premium features.
 
 ### 🛡️ For Admins
 - **Provider Approval Workflow** — Review applications, verify uploaded documents, approve or reject providers.
 - **Craftsman Management** — View details for each provider, manage status, and monitor platform activity.
+
+### 💳 Payments & Subscriptions
+- **Stripe Integration** — Secure payment processing via [Stripe Checkout](https://stripe.com/checkout) for provider subscriptions.
+- **3 Subscription Tiers** — Starter (free), Pro ($29/mo), and Elite ($79/mo) with tiered feature access.
+- **Customer Portal** — Subscribers can manage billing, update payment methods, and cancel via Stripe Customer Portal.
+- **Webhook Support** — Automated subscription lifecycle management through Stripe webhooks.
 
 ### 🏗️ Platform-wide
 - **Multi-role Authentication** — Unified login supporting `customer`, `provider`, and `admin` roles.
@@ -84,9 +96,10 @@
 | **Styling** | Tailwind CSS 4 + Framer Motion animations |
 | **UI Components** | Radix UI primitives + Lucide icons |
 | **Real-time** | Laravel Echo + Pusher (WebSockets) |
+| **Payments** | Stripe (via Laravel Cashier) |
 | **Charts** | Recharts |
 | **Build Tool** | Vite 7 |
-| **Database** | MySQL |
+| **Database** | SQLite / MySQL |
 | **Auth** | Laravel Sanctum + Fortify |
 | **File Storage** | Laravel Storage (public disk) |
 
@@ -125,13 +138,18 @@ php artisan key:generate
 #    DB_USERNAME=root
 #    DB_PASSWORD=
 
-# 7. Run migrations and seed
+# 7. Configure Stripe keys in .env
+#    STRIPE_KEY=pk_test_...
+#    STRIPE_SECRET=sk_test_...
+#    STRIPE_WEBHOOK_SECRET=whsec_...
+
+# 8. Run migrations and seed
 php artisan migrate --seed
 
-# 8. Create storage link
+# 9. Create storage link
 php artisan storage:link
 
-# 9. Start development servers
+# 10. Start development servers
 npm run dev          # Vite dev server
 php artisan serve    # Laravel server (if not using Herd)
 ```
@@ -254,6 +272,46 @@ All API endpoints follow a consistent response structure using the `ApiResponses
 ```
 
 **Authentication:** All protected endpoints use `Bearer` tokens via Laravel Sanctum.
+
+### Subscription API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/provider/subscription` | Get current subscription status & available plans |
+| `POST` | `/api/provider/subscription/checkout` | Create Stripe Checkout session (redirects to Stripe) |
+| `POST` | `/api/provider/subscription/portal` | Open Stripe Customer Portal for billing management |
+
+---
+
+## 🔒 Security
+
+Hirfati is built with **security-first principles** at every layer:
+
+### Authentication & Authorization
+- **Laravel Sanctum** — Secure API token authentication with automatic session-based auth for SPA requests.
+- **Two-Factor Authentication (2FA)** — Optional TOTP-based 2FA via Laravel Fortify for enhanced account protection.
+- **Role-based Access Control (RBAC)** — Strict middleware enforcement (`CheckRole`, `CheckProviderStatus`) ensures users only access their authorized resources.
+- **OTP Email Verification** — Time-limited one-time-password codes for email verification and password reset (not magic links).
+- **Password Hashing** — All passwords are hashed using `bcrypt` with 12 rounds of salting.
+
+### Payment Security
+- **PCI-DSS Compliance** — No credit card data touches our servers. All payment processing is handled by **Stripe Checkout** (PCI Level 1 certified).
+- **Server-side Validation** — Subscription plan selection is validated server-side; the Stripe Price ID is never trusted from the client.
+- **Webhook Verification** — Stripe webhooks are verified using `STRIPE_WEBHOOK_SECRET` to prevent forged events.
+- **Secret Key Protection** — Stripe secret key (`sk_test_*` / `sk_live_*`) is stored exclusively in `.env` and never exposed to the frontend.
+
+### Data Protection
+- **CSRF Protection** — All web forms and state-changing requests are protected by Laravel's CSRF middleware.
+- **CORS Policy** — Strict Cross-Origin Resource Sharing configuration limits API access to authorized domains.
+- **SQL Injection Prevention** — Eloquent ORM with prepared statements prevents SQL injection throughout the codebase.
+- **XSS Prevention** — React's built-in JSX escaping + server-side validation prevents cross-site scripting attacks.
+- **Session Security** — Sessions are encrypted (`SESSION_ENCRYPT`), HTTP-only, and regenerated on authentication state changes.
+
+### Infrastructure Security
+- **Environment Variables** — All secrets (API keys, database credentials, Stripe keys) are stored in `.env` and excluded from version control via `.gitignore`.
+- **File Upload Validation** — Provider documents and images are validated for type, size, and sanitized before storage.
+- **Rate Limiting** — API endpoints are rate-limited to prevent brute-force attacks and abuse.
+- **Provider Verification** — Admin-reviewed document verification workflow ensures only legitimate providers are approved.
 
 ---
 

@@ -5,7 +5,7 @@ import {
  LayoutDashboard, MessageSquare, Settings,
  ShoppingBag, Search, Bell, LogOut,
  Briefcase, Calendar, Star, User, Menu, X,
- DollarSign, Sparkles
+ DollarSign, Sparkles, CreditCard
 } from 'lucide-react';
 import { NavItem } from '../pages/dashboard/components/DashboardComponents';
 import { Toaster } from 'sonner';
@@ -115,6 +115,7 @@ export default function DashboardLayout({ children, title = "Dashboard" }: any) 
  <NavItem icon={<Calendar />} label="Schedule" href="/worker/schedule" active={window.location.pathname.startsWith('/worker/schedule')} />
  <NavItem icon={<Bell />} label="Job Requests" href="/worker/job-requests" active={window.location.pathname.startsWith('/worker/job-requests')} />
  <NavItem icon={<DollarSign />} label="Earnings" href="/worker/earnings" active={window.location.pathname.startsWith('/worker/earnings')} />
+ <NavItem icon={<CreditCard />} label="Subscription" href="/worker/subscription" active={window.location.pathname.startsWith('/worker/subscription')} />
  <NavItem icon={<Star />} label="My Reviews" href="/worker/reviews" active={window.location.pathname.startsWith('/worker/reviews')} />
  <NavItem icon={<User />} label="My Profile" href="/worker/profile" active={window.location.pathname.startsWith('/worker/profile')} />
  </>
@@ -129,7 +130,7 @@ export default function DashboardLayout({ children, title = "Dashboard" }: any) 
  <div>
  <h4 className="font-bold text-slate-900 text-sm">Premium Plan</h4>
  <p className="text-xs text-slate-500 mt-1 mb-2">Unlock all features</p>
- <button className="text-xs font-bold text-orange-600 hover:text-orange-700">Upgrade Now &rarr;</button>
+ <button className="text-xs font-bold text-orange-600 hover:text-orange-700" onClick={() => window.location.href = '/worker/subscription'}>Upgrade Now &rarr;</button>
  </div>
  </div>
  </div>

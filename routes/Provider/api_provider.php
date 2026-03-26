@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Provider\ResubmitApplicationController;
 use App\Http\Controllers\Api\Provider\ProviderController;
 use App\Http\Controllers\Api\Provider\ProviderPostController;
 use App\Http\Controllers\Api\Provider\ProviderScheduleController;
+use App\Http\Controllers\Api\Provider\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +51,9 @@ Route::middleware(['auth:sanctum', 'role:provider'])->prefix('provider')->group(
     // Job Requests
     Route::get('/job-requests', [\App\Http\Controllers\Api\Provider\ProviderJobRequestController::class, 'index']);
     Route::patch('/job-requests/{order}/status', [\App\Http\Controllers\Api\Provider\ProviderJobRequestController::class, 'updateStatus']);
+
+    // Subscription
+    Route::get('/subscription', [SubscriptionController::class, 'status']);
+    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout']);
+    Route::post('/subscription/portal', [SubscriptionController::class, 'portal']);
 });
