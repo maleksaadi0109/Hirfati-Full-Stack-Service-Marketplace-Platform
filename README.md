@@ -333,10 +333,6 @@ This project is proprietary software. All rights reserved.
 
 ---
 
-<div align="center">
 
-**Built with ❤️ by the Hirfati Team**
-
-*Empowering craftsmen. Connecting communities.*
 
 </div>
