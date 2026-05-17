@@ -26,12 +26,14 @@ export default function CompleteProfile() {
     useEffect(() => {
         const user = auth?.user || JSON.parse(localStorage.getItem('user') || 'null');
         if (user?.provider) {
-            setData({
-                bio: user.provider.bio || '',
-                hourly_rate: user.provider.hourlyRate || user.provider.hourly_rate || '',
-                skills: user.provider.skills || '',
-                is_available: user.provider.isAvailable ?? true
-            });
+            setTimeout(() => {
+                setData({
+                    bio: user.provider.bio || '',
+                    hourly_rate: user.provider.hourlyRate || user.provider.hourly_rate || '',
+                    skills: user.provider.skills || '',
+                    is_available: user.provider.isAvailable ?? true
+                });
+            }, 0);
         }
     }, [auth]);
 
