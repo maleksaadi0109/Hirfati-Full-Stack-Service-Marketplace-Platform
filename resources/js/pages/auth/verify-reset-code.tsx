@@ -59,20 +59,20 @@ const FloatingShapes = () => {
                     key={i}
                     className="absolute"
                     style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
+                        left: `${(i * 15) % 100}%`,
+                        top: `${(i * 25) % 100}%`,
                     }}
                     animate={{
                         y: [0, -40, 0],
-                        x: [0, Math.random() * 20 - 10, 0],
+                        x: [0, 10, 0],
                         rotate: [0, 360],
                         opacity: [0.2, 0.5, 0.2],
                         scale: [1, 1.2, 1],
                     }}
                     transition={{
-                        duration: 8 + Math.random() * 12,
+                        duration: 8 + (i % 5),
                         repeat: Infinity,
-                        delay: Math.random() * 5,
+                        delay: i % 3,
                         ease: "easeInOut"
                     }}
                 >
@@ -84,8 +84,8 @@ const FloatingShapes = () => {
                                 : 'bg-gradient-to-br from-yellow-400/30 to-orange-400/30'
                             } ${i % 2 === 0 ? 'rounded-full' : 'rounded-lg rotate-45'} shadow-2xl`}
                         style={{
-                            width: `${20 + Math.random() * 60}px`,
-                            height: `${20 + Math.random() * 60}px`,
+                            width: `${20 + (i * 10) % 60}px`,
+                            height: `${20 + (i * 10) % 60}px`,
                         }}
                     />
                 </motion.div>

@@ -60,16 +60,19 @@ export default function Onboarding() {
         birthday: '',
     });
 
+    const totalSteps = 5;
+
     // Get pending_token from URL query params
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get('pending_token');
         if (token) {
-            setPendingToken(token);
+            // Using setTimeout to avoid setting state synchronously during render in effect
+            setTimeout(() => {
+                setPendingToken(token);
+            }, 0);
         }
     }, []);
-
-    const totalSteps = 5;
 
     // --- Handlers ---
     const updateForm = (key: keyof FormData, value: any) => {

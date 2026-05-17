@@ -8,7 +8,7 @@ if (!content.includes("import axios")) {
 }
 
 // 1. replace the step state and useForm structure
-const stateRegex = /const \[step, setStep\] = useState\(1\);[\s\S]*?id_document: null as File \| null,\n    \}\);/;
+const stateRegex = /const \[step, setStep\] = useState\(1\);[\s\S]*?id_document: null as File \| null,\n {4}\}\);/;
 
 const newFormSetup = `    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +26,7 @@ const newFormSetup = `    const [isLoading, setIsLoading] = useState(false);
 content = content.replace(stateRegex, newFormSetup);
 
 // 2. replace the submit handlers
-const submitRegex = /const validateStep1 = \(\) => \{[\s\S]*?const submit: FormEventHandler = \(e\) => \{[\s\S]*?    \};/;
+const submitRegex = /const validateStep1 = \(\) => \{[\s\S]*?const submit: FormEventHandler = \(e\) => \{[\s\S]*? {4}\};/;
 
 const newSubmit = `    const validateForm = () => {
         return !!(data.first_name && data.last_name && data.phone && data.password && data.password === data.password_confirmation);

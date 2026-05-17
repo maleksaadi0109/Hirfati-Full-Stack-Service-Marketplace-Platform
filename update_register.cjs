@@ -28,7 +28,7 @@ const newFormSetup = `export default function Register() {
         id_document: null as File | null,
     });`;
 
-content = content.replace(/export default function Register\(\) \{[\s\S]*?password_confirmation: '',\n    \}\);/, newFormSetup);
+content = content.replace(/export default function Register\(\) \{[\s\S]*?password_confirmation: '',\n {4}\}\);/, newFormSetup);
 
 const newSubmit = `    const validateStep1 = () => {
         return !!(data.first_name && data.last_name && data.phone && data.password && data.password === data.password_confirmation);
@@ -54,7 +54,7 @@ const newSubmit = `    const validateStep1 = () => {
         });
     };`;
 
-content = content.replace(/    const submit: FormEventHandler = \(e\) => \{[\s\S]*?    \};/, newSubmit);
+content = content.replace(/ {4}const submit: FormEventHandler = \(e\) => \{[\s\S]*? {4}\};/, newSubmit);
 
 console.log("Replaced form setup and submit handlers.");
 
